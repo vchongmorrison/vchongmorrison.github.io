@@ -1,6 +1,8 @@
 ---
-Dissociation of zebrafish larvae for FACS
+title: "dissociation-zebrafish-FACS"
 ---
+
+# Dissociation of zebrafish larvae for FACS
 
 ## Introduction
 This protocol has been tested on dissected heads/trunks and whole 30 hpf larvae to FAC-sort pineal cells (~40 cells per embryo, >80% viability) with a 100 µm nozzle. For negative gating, ~20 whole wild type embryos is usually sufficient.
