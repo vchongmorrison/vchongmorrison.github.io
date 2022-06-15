@@ -2,8 +2,9 @@
 title: "dissociation-zebrafish-FACS"
 ---
 
-V Chong-Morrison
-2022-06-15
+Date : 2022-06-15
+
+Author : V Chong-Morrison
 
 # Dissociation of zebrafish larvae for FACS
 
