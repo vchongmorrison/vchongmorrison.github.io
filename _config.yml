@@ -1,3 +1,5 @@
 theme: jekyll-theme-minimal
 title: V Chong-Morrison
 description: DPhil (Oxon), Research Fellow (UCL)
+collections:
+  - protocols
