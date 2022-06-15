@@ -1,5 +1,5 @@
 ---
-permalink: /:path
+permalink: /protocols/
 ---
 
 ## Protocols
