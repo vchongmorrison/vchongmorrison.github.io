@@ -1,6 +1,5 @@
 ---
-layout: none
-title: Dissociation of zebrafish larvae for FACS
+Dissociation of zebrafish larvae for FACS
 ---
 
 ## Introduction
