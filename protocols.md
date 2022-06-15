@@ -1,3 +1,7 @@
+---
+permalink: /protocols/
+---
+
 ## Protocols
 
 - [Dissociation of zebrafish larvae for FACS](https://vchongmorrison.github.io/protocols/dissociation-zebrafish-FACS/)
