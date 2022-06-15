@@ -1,6 +1,8 @@
 theme: jekyll-theme-minimal
 title: V Chong-Morrison
 description: DPhil (Oxon), Research Fellow (UCL)
+
 collections:
-protocols:
-output: true
+  protocols:
+    output: true
+    permalink: /protocols/:path/
