@@ -1,6 +1,6 @@
 ## Welcome
 
-Hello, this website serves as an up-to-date collection of [protocols](https://vchongmorrison.github.io/protocols) I have put together and optimised for my own experiments. I hope they are useful, and please reach out if errors are spotted, questions etc.
+Hello, this website serves as an up-to-date collection of [protocols](https://vchongmorrison.github.io/protocols/) I have put together and optimised for my own experiments. I hope they are useful, and please reach out if errors are spotted, questions etc.
 
 <br>
 
