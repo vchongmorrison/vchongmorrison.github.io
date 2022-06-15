@@ -14,6 +14,6 @@ Hello, this website serves as an up-to-date collection of protocols I have put t
 
 ## Current affiliation(s)
 
-Cell and Developmental Biology, University College London, UK
-Weatherall Institute of Molecular Medicine, University of Oxford, UK
+- Cell and Developmental Biology, University College London, UK
+- Weatherall Institute of Molecular Medicine, University of Oxford, UK
 
