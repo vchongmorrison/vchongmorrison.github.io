@@ -51,7 +51,7 @@ Ensure following reagents are prepared in advance and stored appropriately.
     | 1M HEPES   | 120 µl      | 10 mM |
     | Water      | up to 12 ml | - |
 
-<br>
+
 
 2. Filter-sterilise (0.22 µm) into a Falcon tube. This will now be used to make up the next two solutions (Dissociation and Dissociation STOP).
 3. Prepare Dissociation solution (600 µl per sample of up to 50 whole embryos or 200 dissected heads/trunks ), in a normal Eppendorf tube is fine.
@@ -65,7 +65,7 @@ Ensure following reagents are prepared in advance and stored appropriately.
     | DNaseI           | 60 µl  | 1 mg/ml |
     | Hank's (filtered)| 500 µl | - |
 
-<br>
+
 
 4. Prepare Dissociation STOP solution in one Falcon tube . Then, split it up so that there is 4 ml in a Falcon tube per sample).
 
@@ -77,7 +77,7 @@ Ensure following reagents are prepared in advance and stored appropriately.
     | DNaseI           | 400 µl  | 1 mg/ml |
     | Hank's (filtered)| 3596 µl | - |
 
-<br>
+
 
 5a. **Bulk cell applications.** Prepare normal i.e. not low-binding micro-centrifuge tubes containing 200 µl Hank's solution + 0.2 µl ROCK inhibitor for cells collection. Place on ice. *Note : Can split into two tubes of 100 µl each, if collecting more than one tube of cells.*
 
