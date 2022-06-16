@@ -53,7 +53,7 @@ Ensure following reagents are prepared in advance and stored appropriately.
     ||||
 
 2. Filter-sterilise (0.22 µm) into a Falcon tube. This will now be used to make up the next two solutions (Dissociation and Dissociation STOP).
-3. Prepare Dissociation solution (600 µl per sample of up to 50 whole embryos or 200 dissected heads/trunks ), in a normal Eppendorf tube is fine.
+3. Prepare Dissociation solution (600 µl per sample of up to 50 whole embryos or 200 dissected heads/trunks), in a normal Eppendorf tube is fine.
 
     **Dissociation solution**
 
@@ -65,7 +65,7 @@ Ensure following reagents are prepared in advance and stored appropriately.
     | Hank's (filtered)| 500 µl | - |
     ||||
 
-4. Prepare Dissociation STOP solution in one Falcon tube . Then, split it up so that there is 4 ml in a Falcon tube per sample).
+4. Prepare Dissociation STOP solution in one Falcon tube . Then, split it up so that there is 4 ml in a Falcon tube per sample.
 
     **Dissociation STOP solution**
 
@@ -99,7 +99,7 @@ Ensure following reagents are prepared in advance and stored appropriately.
 12. Carefully lift the tubes out and discard cell strainer. Remove supernatant (slowly!) until approximately 500 µl is left - an estimate is fine.
 13. Add 0.2 ul of 1:10 diluted eFluor 780 dye.
 14. Resuspend the cell pellet gently using a fresh low-binding tip and transfer to a 5 ml polystyrene round tube. Place on ice and proceed with FACS (about 30 minutes to sort entire sample).
-15. After FACS, pellet collected cells by at 500 g/rcf at 4C for 5 minutes in cooled tabletop micro-centrifuge.
+15. After FACS, pellet collected cells 500 g/rcf at 4C for 5 minutes in cooled tabletop micro-centrifuge.
 
     **Single Cell applications.** If volume of cells post-FACS does not exceed the level marked, step 15 can be skipped. Top-up the cell suspension with filtered Hank’s to the mark and proceed immediately with downstream processing.
 
