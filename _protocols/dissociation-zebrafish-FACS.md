@@ -42,42 +42,36 @@ Ensure following reagents are prepared in advance and stored appropriately.
 
 1. Prepare Hank's solution (blocking isotonic solution for two samples - one experimental, one negative. Always have a negative sample for FACS gating!).
 
-**Hank's solution**
+    **Hank's solution**
 
-| Component | Volume/amount | Final conc. |
-| ---------- |:----------:| ----------:|
-| 10X HBSS   | 1.2 ml      | 1X |
-| BSA        | 0.03 g      | 2.5 mg/ml |
-| 1M HEPES   | 120 µl      | 10 mM |
-| Water      | up to 12 ml | - |
-
-<br>
+    | Component | Volume/amount | Final conc. |
+    | ---------- |:----------:| ----------:|
+    | 10X HBSS   | 1.2 ml      | 1X |
+    | BSA        | 0.03 g      | 2.5 mg/ml |
+    | 1M HEPES   | 120 µl      | 10 mM |
+    | Water      | up to 12 ml | - |
 
 2. Filter-sterilise (0.22 µm) into a Falcon tube. This will now be used to make up the next two solutions (Dissociation and Dissociation STOP).
 3. Prepare Dissociation solution (600 µl per sample of up to 50 whole embryos or 200 dissected heads/trunks ), in a normal Eppendorf tube is fine.
 
-**Dissociation solution**
+    **Dissociation solution**
 
-| Component | Volume/amount | Final conc. |
-| ---------- |:----------:| ----------:|
-| Papain           | 40 µl  | 0.02 U/µl |
-| ROCK inhibitor   | 0.6 µl | 10 µg/ml |
-| DNaseI           | 60 µl  | 1 mg/ml |
-| Hank's (filtered)| 500 µl | - |
-
-<br>
+    | Component | Volume/amount | Final conc. |
+    | ---------- |:----------:| ----------:|
+    | Papain           | 40 µl  | 0.02 U/µl |
+    | ROCK inhibitor   | 0.6 µl | 10 µg/ml |
+    | DNaseI           | 60 µl  | 1 mg/ml |
+    | Hank's (filtered)| 500 µl | - |
 
 4. Prepare Dissociation STOP solution in one Falcon tube . Then, split it up so that there is 4 ml in a Falcon tube per sample).
 
-**Dissociation STOP solution**
+    **Dissociation STOP solution**
 
-| Component | Volume/amount | Final conc. |
-| ---------- |:----------:| ----------:|
-| ROCK inhibitor   | 4 µl | 10 µg/ml |
-| DNaseI           | 400 µl  | 1 mg/ml |
-| Hank's (filtered)| 3596 µl | - |
-
-<br>
+    | Component | Volume/amount | Final conc. |
+    | ---------- |:----------:| ----------:|
+    | ROCK inhibitor   | 4 µl | 10 µg/ml |
+    | DNaseI           | 400 µl  | 1 mg/ml |
+    | Hank's (filtered)| 3596 µl | - |
 
 5a. **Bulk cell applications.** Prepare normal i.e. not low-binding micro-centrifuge tubes containing 200 µl Hank's solution + 0.2 µl ROCK inhibitor for cells collection. Place on ice. *Note : Can split into two tubes of 100 µl each, if collecting more than one tube of cells.*
 
@@ -87,7 +81,7 @@ Ensure following reagents are prepared in advance and stored appropriately.
 
 1. If required, anaesthetise larvae and dissect tissues into glass dish placed on ice containing 1 to 2 ml filtered Hank's solution. Collect samples within 30 minutes to maximise viability.
 
-*Tip : Dissect 10 at a time in Petri dish, transfer with glass pipette and mark somewhere to help keep count.*
+    *Tip : Dissect 10 at a time in Petri dish, transfer with glass pipette and mark somewhere to help keep count.*
 
 2. Set heat-block to 37C. Cool large centrifuge down to 4C.
 3. Collect tissue into low-binding micro-centrifuge tube, and remove as much of Hank's solution as possible. Add Dissociation solution.
@@ -104,13 +98,11 @@ Ensure following reagents are prepared in advance and stored appropriately.
 14. Resuspend the cell pellet gently using a fresh low-binding tip and transfer to a 5 ml polystyrene round tube. Place on ice and proceed with FACS (about 30 minutes to sort entire sample).
 15. After FACS, pellet collected cells by at 500 g/rcf at 4C for 5 minutes in cooled tabletop micro-centrifuge.
 
-**Single Cell applications.** If volume of cells post-FACS does not exceed the level marked, step 15 can be skipped. Top-up the cell
-suspension with filtered Hank’s to the mark and proceed immediately with downstream processing.
+    **Single Cell applications.** If volume of cells post-FACS does not exceed the level marked, step 15 can be skipped. Top-up the cell suspension with filtered Hank’s to the mark and proceed immediately with downstream processing.
 
 16. Very carefully, remove the supernatant and proceed with downstream applications.
 
-**Single Cell applications.** If volume of cells post-FACS exceeds the level marked, remove supernatant to the mark. Gently resuspend the
-pelleted cells with a low-binding tip, place on ice, and proceed immediately with downstream processing.
+    **Single Cell applications.** If volume of cells post-FACS exceeds the level marked, remove supernatant to the mark. Gently resuspend the pelleted cells with a low-binding tip, place on ice, and proceed immediately with downstream processing.
 
 ### Appendix
 
