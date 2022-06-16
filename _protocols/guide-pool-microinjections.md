@@ -35,8 +35,7 @@ Adapted from Addgene's [Pooled Library Amplification protocol](https://www.addge
 5. Check concentration of pool on Nanodrop.
 6. If necessary, dilute the pool with nuclease-free water in a fresh micro-centrifuge tube to obtain 400-500 ng of DNA in 10 µl.
 
-*E.g. 200 ng each of 15 guides were pooled together and the final volume was 65 µl, so we expect the pool’s concentration to be 46.2 ng/µl. 10 µl of this
-would be 462 ng of DNA - good to proceed without dilution.*
+    *E.g. 200 ng each of 15 guides were pooled together and the final volume was 65 µl, so we expect the pool’s concentration to be 46.2 ng/µl. 10 µl of this would be 462 ng of DNA - good to proceed without dilution.*
 
 7. Pre-warm SOC medium.
 8. Transform 10 µl of pooled DNA into 100 µl competent cells using standard protocol, adding 1 mL pre-warmed SOC at the end.
@@ -54,11 +53,11 @@ would be 462 ng of DNA - good to proceed without dilution.*
 
 1. Count single colonies on the 1:100 dish and work out the Total Colony Yield.
 
-Total Colony Yield = count x 100 ÷ 0.1
-
-Total Colony Yield should be at least 1000X greater than number of guides in the pool.
-
-*E.g. At least 15 single colonies counted on the 1:100 plate for 1000x coverage of a library of 15 plasmids.*
+    Total Colony Yield = count x 100 ÷ 0.1
+    
+    Total Colony Yield should be at least 1000X greater than number of guides in the pool.
+    
+    *E.g. At least 15 single colonies counted on the 1:100 plate for 1000x coverage of a library of 15 plasmids.*
 
 2. Typically, there is an excess of the required number of single colonies on the 1:100 dish, and too many colonies to count on the undiluted dish.
 3. Chill 50 mL Falcon tubes (ensure they are rated for high centrifuge speeds!) on ice - one per non-diluted plate/pool.
@@ -72,24 +71,24 @@ Total Colony Yield should be at least 1000X greater than number of guides in the
 11. Alternatively, if processing the entire slurry or the backup pellet (resuspend with fresh cold LB), proceed with Midiprep to purify DNA. Elute DNA in 0.5 to 1 mL of Elution Buffer.
 12. Quantify DNA (diluted 1:20) by Qubit (not Nanodrop, for accuracy needed for microinjections).
 
-*Typical yield is 300 - 500 ng/µl for 1 mL eluted DNA (Midiprep) or ~1 µg/µl for 50 uL eluted DNA (Miniprep)*
+    *Typical yield is 300 - 500 ng/µl for 1 mL eluted DNA (Midiprep) or ~1 µg/µl for 50 uL eluted DNA (Miniprep)*
 
 ### Day 3
 
 1. Check that each guide is present in the purified pool using PCR:
 
-- Prepare 2X PCR master mixes for each guide using forward primer (targeting the universal backbone) and reverse primer (specific to each guide).
-- One reaction experimental i.e. purified pool, one reaction negative control i.e. water.
-- Use 1 ng of the purified pool in 25 µl Taq polymerase reactions, for 30 cycles. If desired, use limited-cycle PCR (e.g. < 20 cycles) to roughly assess representation of each guide via gel band intensity.
-- Check results on a gel.
+    - Prepare 2X PCR master mixes for each guide using forward primer (targeting the universal backbone) and reverse primer (specific to each guide).
+    - One reaction experimental i.e. purified pool, one reaction negative control i.e. water.
+    - Use 1 ng of the purified pool in 25 µl Taq polymerase reactions, for 30 cycles. If desired, use limited-cycle PCR (e.g. < 20 cycles) to roughly assess representation of each guide via gel band intensity.
+    - Check results on a gel.
 
 2. PCR conditions I have tested:
 
-- Forward primer targeting beginning of U6a promoter (`ATCCCTCGActcgagtttacgtaTTTCTCCAGCCTCGGTCATTCAG`) and Reverse spacer oligo (used in previous
+    - Forward primer targeting beginning of U6a promoter (`ATCCCTCGActcgagtttacgtaTTTCTCCAGCCTCGGTCATTCAG`) and Reverse spacer oligo (used in previous
 BsmBI guide cloning) producing ~450 bp amplicon.
-- OneTaq® Hot Start 2X Master Mix with Standard Buffer (M0484, New England Biolabs)
-- Primer concentration: 0.5 µl of 10 µM each
-- Annealing temperature: 56C
-- Extension time: 35 secs
+    - OneTaq® Hot Start 2X Master Mix with Standard Buffer (M0484, New England Biolabs)
+    - Primer concentration: 0.5 µl of 10 µM each
+    - Annealing temperature: 56C
+    - Extension time: 35 secs
 
 Run 5 ul of reaction on 1% gel.
