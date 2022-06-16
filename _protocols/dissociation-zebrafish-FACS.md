@@ -78,7 +78,7 @@ Ensure following reagents are prepared in advance and stored appropriately.
 
 5a. **Bulk cell applications.** Prepare normal i.e. not low-binding micro-centrifuge tubes containing 200 µl Hank's solution + 0.2 µl ROCK inhibitor for cells collection. Place on ice. *Note : Can split into two tubes of 100 µl each, if collecting more than one tube of cells.*
 
-5b. **Single cell applications.** Pipette input volume (e.g. 43 µl for 10X Genomics Single Cell 3’ v3.1) of nuclease-free water into a normal i.e. not low-binding micro-centrifuge tube. Pulse-spin, then mark the level with a fine marker. Remove all the water, then pipette 2 µl filtered Hank’s solution, ready for cells collection.
+5b. **Single cell applications.** Pipette input volume (e.g. 43 µl for 10X Genomics Single Cell 3’ v3.1) of nuclease-free water into a normal i.e. not low-binding micro-centrifuge tube. Pulse-spin, then mark the level with a fine marker. Remove all the water, then pipette 2 µl filtered Hank’s solution, ready for cells collection. If input volume is generous (e.g. BD Rhapsody) and pelleting is not needed after, use a low-binding tube.
 
 ### Steps
 
@@ -101,7 +101,7 @@ Ensure following reagents are prepared in advance and stored appropriately.
 14. Resuspend the cell pellet gently using a fresh low-binding tip and transfer to a 5 ml polystyrene round tube. Place on ice and proceed with FACS (about 30 minutes to sort entire sample).
 15. After FACS, pellet collected cells 500 g/rcf at 4C for 5 minutes in cooled tabletop micro-centrifuge.
 
-    **Single Cell applications.** If volume of cells post-FACS does not exceed the level marked, step 15 can be skipped. Top-up the cell suspension with filtered Hank’s to the mark and proceed immediately with downstream processing.
+    **Single Cell applications.** If volume of cells post-FACS does not exceed the level marked or is below input volume, step 15 can be skipped. Top-up the cell suspension with filtered Hank’s or appropriate buffer and proceed immediately with downstream processing.
 
 16. Very carefully, remove the supernatant and proceed with downstream applications.
 
