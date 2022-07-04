@@ -71,21 +71,20 @@ Ensure ATAC reagents are prepared. Place PBS, NaCl, MgCl2, NP40 and EtOH on ice 
 9. Centrifuge 500 g/rcf at 4C for 10 minutes in cooled tabletop micro-centrifuge.
 10. Carefully remove supernatant and set the nuclei pellet on ice.
 11. Proceed immediately to Tn5 transposition.
-   
-   **Tn5 transposition**
-   
-   | Component | Volume/amount | Final conc. |
-   | :---------- |:----------:| ----------:|
-   | Nuclease free water   | 9 µl | - |
-   | 2X TD Buffer      | 10 µl | 1X |
-   | TDE1 Enzyme   |  1 µl | - |
-   | Total      | 20 µl | - |
-   ||||
-   
-12. Pipette up and down to mix, then transfer reactions into fresh DNA LoBind® tubes.
-13. Incubate at 37C for 30 minutes.
-14. STOP transposition by purifying the reactions using a suitable PCR purification kit, eluting the transposed DNA in 10 µl of buffer.
-15. Store purified DNA in -20C or proceed with PCR amplification to generate ATACseq libraries.
+    
+    **Tn5 transposition**
+    | Component | Volume/amount | Final conc. |
+    | :---------- |:----------:| ----------:|
+    | Nuclease free water   | 9 µl | - |
+    | 2X TD Buffer      | 10 µl | 1X |
+    | TDE1 Enzyme   |  1 µl | - |
+    | Total      | 20 µl | - |
+    ||||
+    
+13. Pipette up and down to mix, then transfer reactions into fresh DNA LoBind® tubes.
+14. Incubate at 37C for 30 minutes.
+15. STOP transposition by purifying the reactions using a suitable PCR purification kit, eluting the transposed DNA in 10 µl of buffer.
+16. Store purified DNA in -20C or proceed with PCR amplification to generate ATACseq libraries.
 
 ### Steps - PCR amplification and indexing of libraries
 
