@@ -92,7 +92,7 @@ Ensure following reagents are prepared in advance and stored appropriately.
 10. Place a 40 µm cell strainer into a fresh Protein LoBind® tube.
 11. Pre-coat a P1000 tip (set to 500 µl) with filtered Hank's before gently resuspending the cell suspension and transfer everything onto the cell strainer.
 12. With cell strainer still attached, centrifuge at 500 g/rcf at 4C for 5 minutes.
-13. **Bulk cell applications.** Prepare normal retention tubes (if planning to pellet cells for nucleic acid extraction) for FACS collection - 100 µl filtered Hank's per tube.
+13. **Bulk cell applications.** Prepare normal retention tubes (if planning to pellet cells) for FACS collection - 100 µl filtered Hank's per tube.
 14. Discard cell strainer and gently remove supernatant until approximately 500 µl remain.
 15. Add 0.2 ul of 1:10 diluted eFluor 780 dye.
 16. Resuspend the cell pellet gently using a fresh pre-coated p200 (set to 100 µl) low-binding tip and transfer to a 5 ml polystyrene round tube. 
@@ -104,7 +104,7 @@ Ensure following reagents are prepared in advance and stored appropriately.
 #### Examples of downstream applications
 
 - RNA extraction - resuspend pelleted cells in 100 µl Lysis Buffer (Ambion RNAqueous Micro-kit) and proceed with RNA extraction.
-- ATAC-seq - protocol available separately. Note: FACS into DNA LoBind® tubes, 1.5 ml (0030108051, Eppendorf).
+- ATAC-seq - protocol available separately.
 
 #### Evaluating dissociations
 
