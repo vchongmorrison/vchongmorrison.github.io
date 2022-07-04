@@ -104,7 +104,7 @@ Ensure following reagents are prepared in advance and stored appropriately.
 #### Examples of downstream applications
 
 - RNA extraction - resuspend pelleted cells in 100 µl Lysis Buffer (Ambion RNAqueous Micro-kit) and proceed with RNA extraction.
-- ATAC-seq - protocol available separately (to be written up). Note: FACS into DNA LoBind® tubes, 1.5 ml (0030108051, Eppendorf).
+- ATAC-seq - protocol available separately. Note: FACS into DNA LoBind® tubes, 1.5 ml (0030108051, Eppendorf).
 
 #### Evaluating dissociations
 
