@@ -9,9 +9,9 @@ Author : V Chong-Morrison
 # Preparation of ATAC-seq libraries from FACS samples
 
 ## Introduction
-This protocol has been tested on 14,000* FAC-sorted cells (BD Fusion).
+This protocol has been tested on 14,000 (see note) FAC-sorted cells (BD Fusion).
 
-*as guidance only, unlikely to be an accurate number which is typical for most sorters - based on experience the no. of events for most sorters overestimate ~50% of `true’ cell number.
+*Note: As guidance only, unlikely to be an accurate number which is typical for most sorters - based on experience the no. of events for most sorters overestimate ~50% of 'true' cell number.*
 
 ## Materials
 - Pipette tips, low-binding/retention grade, for cell work
@@ -69,10 +69,11 @@ Ensure ATAC reagents are prepared. Place PBS, NaCl, MgCl2, NP40 and EtOH on ice 
 7. Carefully remove PBS and add 50 µl cold Cell Lysis Buffer.
 8. Gently pipette 3-5 times to resuspend the cell pellet.
 9. Centrifuge 500 g/rcf at 4C for 10 minutes in cooled tabletop micro-centrifuge.
-10. Carefully remove supernatant and set the nuclei pellet on ice. Proceed immediately to Tn5 transposition.
-
+10. Carefully remove supernatant and set the nuclei pellet on ice.
+11. Proceed immediately to Tn5 transposition.
+   
    **Tn5 transposition**
-
+   
    | Component | Volume/amount | Final conc. |
    | :---------- |:----------:| ----------:|
    | Nuclease free water   | 9 µl | - |
@@ -80,11 +81,11 @@ Ensure ATAC reagents are prepared. Place PBS, NaCl, MgCl2, NP40 and EtOH on ice 
    | TDE1 Enzyme   |  1 µl | - |
    | Total      | 20 µl | - |
    ||||
-    
-11. Pipette up and down to mix, then transfer reactions into fresh DNA LoBind® tubes.
-12. Incubate at 37C for 30 minutes.
-13. STOP transposition by purifying the reactions using a suitable PCR purification kit, eluting the transposed DNA in 10 µl of buffer.
-14. Store purified DNA in -20C or proceed with PCR amplification to generate ATACseq libraries.
+   
+12. Pipette up and down to mix, then transfer reactions into fresh DNA LoBind® tubes.
+13. Incubate at 37C for 30 minutes.
+14. STOP transposition by purifying the reactions using a suitable PCR purification kit, eluting the transposed DNA in 10 µl of buffer.
+15. Store purified DNA in -20C or proceed with PCR amplification to generate ATACseq libraries.
 
 ### Steps - PCR amplification and indexing of libraries
 
