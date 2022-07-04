@@ -73,6 +73,7 @@ Ensure ATAC reagents are prepared. Place PBS, NaCl, MgCl2, NP40 and EtOH on ice 
 11. Proceed immediately to Tn5 transposition.
     
     **Tn5 transposition**
+    
     | Component | Volume/amount | Final conc. |
     | :---------- |:----------:| ----------:|
     | Nuclease free water   | 9 µl | - |
