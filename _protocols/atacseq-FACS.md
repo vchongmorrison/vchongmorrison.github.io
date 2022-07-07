@@ -65,10 +65,10 @@ Ensure ATAC reagents are prepared. Place PBS, NaCl, MgCl2, NP40 and EtOH on ice 
 3. Pellet collected cells at 500 g/rcf at 4C for 5 minutes in cooled tabletop micro-centrifuge.
 4. Carefully remove Hank's without disturbing the cell pellet (can be challenging to see).
 5. Add 50 µl cold 1X PBS by pipetting gently against the opposite wall where the cell pellet would be.
-6. Centrifuge 500 g/rcf at 4C for 5 minutes in cooled tabletop micro-centrifuge.
+6. Wash cell pellet by centrifuging 500 g/rcf at 4C for 5 minutes in cooled tabletop micro-centrifuge.
 7. Carefully remove PBS and add 50 µl cold Cell Lysis Buffer.
-8. Gently pipette 3-5 times to resuspend the cell pellet.
-9. Centrifuge 500 g/rcf at 4C for 10 minutes in cooled tabletop micro-centrifuge.
+8. Lyse cells by gently pipetting 3-5 times.
+9. Pellet nuclei by centrifuging 500 g/rcf at 4C for 10 minutes in cooled tabletop micro-centrifuge.
 10. Carefully remove supernatant and set the nuclei pellet on ice.
 11. Proceed immediately to Tn5 transposition.
     
@@ -82,7 +82,7 @@ Ensure ATAC reagents are prepared. Place PBS, NaCl, MgCl2, NP40 and EtOH on ice 
     | Total      | 20 µl | - |
     ||||
     
-13. Pipette up and down to mix, then transfer reactions into fresh DNA LoBind® tubes.
+13. Pipette up and down to resuspend pellet in Tn5 mix, then transfer reactions into fresh DNA LoBind® tubes.
 14. Incubate at 37C for 30 minutes.
 15. STOP transposition by purifying the reactions using a suitable PCR purification kit, eluting the transposed DNA in 10 µl of buffer.
 16. Store purified DNA in -20C or proceed with PCR amplification to generate ATACseq libraries.
@@ -136,7 +136,7 @@ Ensure ATAC reagents are prepared. Place PBS, NaCl, MgCl2, NP40 and EtOH on ice 
 15. Carefully remove the supernatant into a fresh DNA LoBind® tube - this is your final ATACseq library.
 16. Store in -20C.
 
-### Steps - Library QC, quantification and NGS.
+### Steps - Library QC, quantification and NGS
 
 1. Assess the success of the experiment using Agilent TapeStation D1000 (regular or high sensitivity) or Bioanalyzer equivalent. Transposition is deemed successful if a periodic set of peaks (~150bp, 300 bp, 450 bp…) can be detected indicative of mono-, di-, tri-… nucleosomes.
 2. For accurate quantification of libraries prior to NGS, quantify using a suitable qPCR-based library quantification kit for Illumina (e.g. KAPA Biosystems, NEB) by testing 1:2000, 1:5000 and 1:10,000 dilutions of the library and taking the mean concentration as final result.
