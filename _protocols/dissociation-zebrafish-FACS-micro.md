@@ -103,7 +103,7 @@ Ensure following reagents are prepared in advance and stored appropriately.
 
 #### Examples of downstream applications
 
-- RNA extraction - resuspend pelleted cells in 100 µl Lysis Buffer (Ambion RNAqueous Micro-kit) and proceed with RNA extraction.
+- RNA extraction - resuspend pelleted cells in 100 µl Lysis Buffer (RNAqueous™-Micro Total RNA Isolation Kit, AM1931, ThermoFisher) and proceed with RNA extraction.
 - ATAC-seq - protocol available separately.
 
 #### Evaluating dissociations
