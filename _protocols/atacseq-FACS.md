@@ -25,7 +25,7 @@ This protocol has been tested on 14,000 (see note) FAC-sorted cells (BD Fusion).
 - 1M Tris-HCl pH 7.4
 - 5M NaCl
 - 1M MgCl2
-- 10% NP40 a.k.a. Igepal CA-630
+- 10% NP40 or Igepal CA-630
 - EtOH, molecular biology grade
 - TE buffer, molecular biology grade
 - Any suitable PCR purification kit e.g. NEB Monarch, Qiagen PCR Purification MinElute, Zymo Research DNA Clean & Concentrator-5
@@ -33,7 +33,7 @@ This protocol has been tested on 14,000 (see note) FAC-sorted cells (BD Fusion).
 - Tagment DNA TDE1 Enzyme and Buffer Kit (20034197 or 20034198, Illumina)
 - NEBNext® Q5® Hot Start HiFi PCR Master Mix (or suitable alternative) (M0543, New England Biolabs)
 - AMPure XP for PCR Purification (A63880, Beckman-Coulter)
-- Nextera or Buenrostro et al. primers (see Appendix below)
+- Nextera or Buenrostro *et al.* primers (see Appendix below)
 
 ## Procedure
 
@@ -52,10 +52,12 @@ Ensure ATAC reagents are prepared. Place PBS, NaCl, MgCl2, NP40 and EtOH on ice 
    | 1M Tris-HCl pH 7.5   | 10 µl      | 10 mM |
    | 5M NaCl        | 2 µl      | 10 mM |
    | 1M MgCl2   | 3 µl      | 3 mM |
-   | 10% NP40      | 1 µl | 0.1% |
+   | 10% NP40      | 1 µl | 0.01%* |
    | Nuclease-free water      | up to 1 ml | - |
    ||||
-    
+
+\* *Most (including the original ATAC-seq) protocols for whole cells use 0.1%. Some protocols for nuclei use 0.01%. I have always used 0.01% and this works well in my hands and sample type (<10k zebrafish embryonic cells) i.e. minimises chances of overtagmentation. If your libraries are slightly undertagmented this could be adjusted without having to change other variables. Thanks to D Fountain for bringing this to my attention.*
+
 2. FACS population-of-interest into normal retention tubes containing 100 µl filtered Hank's.
 
 ### Steps - Tn5 transposition
