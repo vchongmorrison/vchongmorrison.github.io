@@ -58,21 +58,20 @@ Ensure ATAC reagents are prepared. Place PBS, NaCl, MgCl2, NP40 and EtOH on ice 
 
 \* *Most (including the original ATAC-seq) protocols for whole cells use 0.1%. Some protocols for nuclei use 0.01%. I have always used 0.01% and this works well in my hands and sample type (<10k zebrafish embryonic cells) i.e. minimises chances of overtagmentation. If your libraries are slightly undertagmented this could be adjusted without having to change other variables. Thanks to D Fountain for bringing this to my attention.*
 
-2. FACS population-of-interest into normal retention tubes containing 100 µl filtered Hank's.
-
 ### Steps - Tn5 transposition
 
-1. Set heat-block to 37C. Cool tabletop micro-centrifuge down to 4C.
-2. If desired and there is sufficient material, split collected cells equally to obtain two replicates.
-3. Pellet collected cells at 500 g/rcf at 4C for 5 minutes in cooled tabletop micro-centrifuge.
-4. Carefully remove Hank's without disturbing the cell pellet (can be challenging to see).
-5. Add 50 µl cold 1X PBS by pipetting gently against the opposite wall where the cell pellet would be.
-6. Wash cell pellet by centrifuging 500 g/rcf at 4C for 5 minutes in cooled tabletop micro-centrifuge.
-7. Carefully remove PBS and add 50 µl cold Cell Lysis Buffer.
-8. Lyse cells by gently pipetting 3-5 times.
-9. Pellet nuclei by centrifuging 500 g/rcf at 4C for 10 minutes in cooled tabletop micro-centrifuge.
-10. Carefully remove supernatant and set the nuclei pellet on ice.
-11. Proceed immediately to Tn5 transposition.
+1. FACS population-of-interest into normal retention tubes containing 100 µl filtered Hank's.
+2. Set heat-block to 37C. Cool tabletop micro-centrifuge down to 4C.
+3. If desired and there is sufficient material, split collected cells equally to obtain two replicates.
+4. Pellet collected cells at 500 g/rcf at 4C for 5 minutes in cooled tabletop micro-centrifuge.
+5. Carefully remove Hank's without disturbing the cell pellet (can be challenging to see).
+6. Add 50 µl cold 1X PBS by pipetting gently against the opposite wall where the cell pellet would be.
+7. Wash cell pellet by centrifuging 500 g/rcf at 4C for 5 minutes in cooled tabletop micro-centrifuge.
+8. Carefully remove PBS and add 50 µl cold Cell Lysis Buffer.
+9. Lyse cells by gently pipetting 3-5 times.
+10. Pellet nuclei by centrifuging 500 g/rcf at 4C for 10 minutes in cooled tabletop micro-centrifuge.
+11. Carefully remove supernatant and set the nuclei pellet on ice.
+12. Proceed immediately to Tn5 transposition.
     
     **Tn5 transposition**
     
