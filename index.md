@@ -8,6 +8,12 @@ Hello, this page serves as an up-to-date collection of [protocols](https://vchon
 
 <br>
 
+## Paper-specific subpages
+
+[Ac/Ds transposition for CRISPR/dCas9-SID4x epigenome modulation in zebrafish](https://vchongmorrison.github.io/zfCRISPRi/)
+
+<br>
+
 ## Current affiliation(s)
 
 - Cell and Developmental Biology, University College London, UK
