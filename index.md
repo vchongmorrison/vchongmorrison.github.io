@@ -7,7 +7,7 @@ This page hosts an up-to-date collection of [protocols](https://vchongmorrison.g
 - [Twitter](https://twitter.com/van_cmorr?s=20&t=f0hoHmA8onWGtx8iOJFnAQ)
 - [Email](https://vchongmorrison.github.io/email/)
 
-#### My projects (non-exhaustive list)
+#### Projects (non-exhaustive list)
 
 - [Ac/Ds transposition for CRISPR/dCas9-SID4x epigenome modulation in zebrafish](https://vchongmorrison.github.io/zfCRISPRi/)
 
