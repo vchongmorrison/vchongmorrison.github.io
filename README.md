@@ -2,7 +2,7 @@
 
 - DPhil (Oxon), 2018
 - Research Associate (UCL), 2018 - 2024
-- Senior Postdoctoral Scientist (University of Oxford), 2022 - current
+- Senior Postdoctoral Scientist (University of Oxford), 2023 - current
 
 ### Current affiliations
 - Cell and Developmental Biology, University College London, UK
