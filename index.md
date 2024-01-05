@@ -4,8 +4,9 @@ This page hosts an up-to-date collection of [protocols](https://vchongmorrison.g
 
 #### Contact
 
-- [Twitter](https://twitter.com/van_cmorr?s=20&t=f0hoHmA8onWGtx8iOJFnAQ)
 - [Email](https://vchongmorrison.github.io/email/)
+- Twitter/X - @van_cmorr
+- Mastodon - @ChongMorrison@biologists.social
 
 #### Projects (non-exhaustive list)
 
@@ -16,7 +17,8 @@ This page hosts an up-to-date collection of [protocols](https://vchongmorrison.g
 ## About Me
 
 - DPhil (Oxon), 2018
-- Research Fellow (UCL), 2018 - current
+- Research Associate (UCL), 2018 - 2024
+- Senior Postdoctoral Scientist (University of Oxford), 2022 - current
 
 ### Current affiliations
 - Cell and Developmental Biology, University College London, UK
