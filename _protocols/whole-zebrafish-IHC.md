@@ -46,7 +46,6 @@ I generally use primary antibodies at 1:200, and secondary Alexa Fluor antibodie
 1. Rinse 2x in PBST.
 2. Wash 3x 10 mins PBST on side on shaker. 
 3. Dehydrate into MeOH:
-
 - 1x 5 mins 50% MeOH/50% PBST
 - 2x Rinse in 100% MeOH
 
