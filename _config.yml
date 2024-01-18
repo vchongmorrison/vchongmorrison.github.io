@@ -6,3 +6,6 @@ collections:
   protocols:
     output: true
     permalink: /protocols/:path/
+    
+plugins:
+  - jekyll-seo-tag
