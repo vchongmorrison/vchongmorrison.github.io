@@ -8,3 +8,4 @@ permalink: /protocols/
 - [Dissociation of zebrafish larvae for FACS - micro version](https://vchongmorrison.github.io/protocols/dissociation-zebrafish-FACS-micro/)
 - [Preparation of ATAC-seq libraries from FACS samples](https://vchongmorrison.github.io/protocols/atacseq-FACS/)
 - [CRISPR guide pool preparation for microinjections](https://vchongmorrison.github.io/protocols/guide-pool-microinjections/)
+- [Whole-mount zebrafish immunohistochemistry](https://vchongmorrison.github.io/protocols/whole-zebrafish-IHC/)
