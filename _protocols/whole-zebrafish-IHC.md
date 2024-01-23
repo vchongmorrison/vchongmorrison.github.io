@@ -13,7 +13,7 @@ Turner, K.J., Bracewell, T.G., Hawkins, T.A. (2014). Anatomical Dissection of Ze
 # Whole-mount zebrafish immunohistochemistry
 
 ## Introduction
-This protocol has been tested on the following antibodies (antibody, supplier (may be more than one), clone ID (if known)):
+This protocol has been tested with the following antibodies (antibody, supplier (may be more than one), clone ID (if known)):
 - rabbit GFP - Torrey Pines BioLab (TP401)
 - chicken GFP - abcam (ab13970)
 - mouse Tubulin (Acetyl Lys40) - GeneTex (GTX16292) Sigma (T7451), 6-11B-1
@@ -42,7 +42,6 @@ I generally use primary antibodies at 1:200, and secondary Alexa Fluor antibodie
 - (If post-fixing dissection required) Sweet fix (4% PFA + 4% sucrose) for 3 hrs at RT or overnight at 4C
 
 #### Rinse and dehydration
-
 1. Rinse 2x in PBST.
 2. Wash 3x 10 mins PBST on side on shaker. 
 3. Dehydrate into MeOH:
@@ -50,6 +49,8 @@ I generally use primary antibodies at 1:200, and secondary Alexa Fluor antibodie
 - 2x Rinse in 100% MeOH
 
 4. Store at -20C in 100% MeOH at least overnight up to 6 months.
+
+**NOTE** Rinsing and dehydrating with plain PBS works too.
 
 ### Day 1
 
