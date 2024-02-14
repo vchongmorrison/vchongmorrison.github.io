@@ -91,7 +91,8 @@ I generally use primary antibodies at 1:200, and secondary Alexa Fluor antibodie
 #### Washes	
 1. Remove primary antibody (can be kept at 4C for reuse within a week).
 2. Rinse 3x in PBST. 
-3. Wash 6x 30 mins in PBST on nutator. 
+3. Wash 6x 30 mins in PBST on nutator.
+ 
 **NOTE** If you incubate primary antibody over several days then wash more.
 
 #### Secondary antibodies - keep dark

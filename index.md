@@ -11,6 +11,7 @@ This page hosts an up-to-date collection of [protocols](https://vchongmorrison.g
 #### Projects (non-exhaustive list)
 
 - [Ac/Ds transposition for CRISPR/dCas9-SID4x epigenome modulation in zebrafish](https://vchongmorrison.github.io/zfCRISPRi/)
+- Establishment of left/right asymmetry in the vertebrate forebrain
 
 <br>
 

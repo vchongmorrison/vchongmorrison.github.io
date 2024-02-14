@@ -13,3 +13,4 @@ permalink: /protocols/
 ## Protocols in development
 These are undergoing optimisation and not stable versions.
 - [Preparation of zebrafish larvae brain sections for spatial omics](https://docs.google.com/document/d/1eRMUO8ovkHfnrDFQYvfsm78A3y4Oa8Rr78xvWZN22Rg/edit?usp=drive_link)
+- [APPENDIX - HCRv3.0 for whole mount zebrafish embryos](https://docs.google.com/document/d/17T4Np-Gi8ReniukEduJEbP4vP9qKnhlzZs34_6M8BbM/edit?usp=sharing)
