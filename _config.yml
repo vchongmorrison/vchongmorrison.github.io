@@ -9,3 +9,4 @@ collections:
     
 plugins:
   - jekyll-seo-tag
+  - jekyll-toc

@@ -1,5 +1,6 @@
 ---
 permalink: /protocols/
+toc: true
 ---
 
 ## Protocols
