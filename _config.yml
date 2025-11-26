@@ -6,6 +6,9 @@ collections:
   protocols:
     output: true
     permalink: /protocols/:path/
+  mynotebook:
+    output: true
+    permalink: /mynotebook/:path/
     
 plugins:
   - jekyll-seo-tag
