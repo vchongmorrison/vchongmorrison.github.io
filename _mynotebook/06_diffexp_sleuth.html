@@ -1,0 +1,1811 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.31">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>6. Differential expression - 48h stim, Healthy donors</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="06_diffexp_sleuth_files/libs/clipboard/clipboard.min.js"></script>
+<script src="06_diffexp_sleuth_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="06_diffexp_sleuth_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="06_diffexp_sleuth_files/libs/quarto-html/popper.min.js"></script>
+<script src="06_diffexp_sleuth_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="06_diffexp_sleuth_files/libs/quarto-html/anchor.min.js"></script>
+<link href="06_diffexp_sleuth_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="06_diffexp_sleuth_files/libs/quarto-html/quarto-syntax-highlighting-7c69b197886ae2a34062761d21e44731.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="06_diffexp_sleuth_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="06_diffexp_sleuth_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="06_diffexp_sleuth_files/libs/bootstrap/bootstrap-8bd2ffaa1338207a03e6f5740c61cdb5.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">6. Differential expression - 48h stim, Healthy donors</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>V Chong | vanessa.chong@rdm.ox.ac.uk | 12 January 2026</p>
+<section id="preamble" class="level1">
+<h1>Preamble</h1>
+<ul>
+<li>Bulk RNAseq samples from healthy, patient-derived organoids of the colon and terminal ileum (TI).</li>
+<li>Libraries were prepared and sequenced in several batches.</li>
+<li>Organoids were stimulated with IL22 only, both IL22 and IL26, or IL26 only. Controls were unstimulated.</li>
+<li>Stimulation was performed for 24 or 48 hours.</li>
+</ul>
+<section id="points-of-note" class="level2">
+<h2 class="anchored" data-anchor-id="points-of-note">Points-of-note</h2>
+<ul>
+<li>Samples are spread across three batches, with two technical replicates (<code>_T1</code> and <code>_T2</code>) per donor i.e.&nbsp;same RNA, sampled twice to make libraries for sequencing.</li>
+</ul>
+<p>These are all reflected in the sample metadata called into the analysis later.</p>
+</section>
+</section>
+<section id="analysis" class="level1">
+<h1>Analysis</h1>
+<ul>
+<li><p>Consider the impact of experimental covariates e.g.&nbsp;donor, batch. Statistically test for genes that are affected between the stimulation conditions while controlling for differences due to these covariates. This gives a broad view of the genes and/or pathways that IL22 and/or IL26 could be affecting.</p></li>
+<li><p>Pairwise comparison between each IL stimulation vs control.</p></li>
+</ul>
+<section id="pseudoalignment-and-estimation-of-transcript-abundances" class="level2">
+<h2 class="anchored" data-anchor-id="pseudoalignment-and-estimation-of-transcript-abundances">Pseudoalignment and estimation of transcript abundances</h2>
+<p><a href="https://doi.org/10.1038/nbt.3519">Kallisto</a> with bootstraps (<code>-b 100</code>) enabled for downstream <a href="https://doi.org/10.1038/nmeth.4324">sleuth</a> differential expression.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load kallisto/0.46.1</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">kallisto</span> quant <span class="at">-i</span> /project/thelior_project/vchong/ensembl/release-115/kallisto-cDNA/cdna-release-115.idx <span class="at">-o</span> ./A2_17_A4_T2 <span class="at">-b</span> 100 <span class="at">-t</span> 4 <span class="dt">\</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>/project/thelior_project/vchong/novogene_exp8/fastp/A2_17_A4_T2.R1.fq.gz <span class="dt">\</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>/project/thelior_project/vchong/novogene_exp8/fastp/A2_17_A4_T2.R2.fq.gz</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="differential-expression-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="differential-expression-analysis">Differential expression analysis</h2>
+<p><a href="https://pachterlab.github.io/sleuth/walkthroughs">Reference</a> - “Differential analysis using p-value aggregation, on multiple conditions and covariates”</p>
+<section id="initialise-r-environment" class="level3">
+<h3 class="anchored" data-anchor-id="initialise-r-environment">Initialise R environment</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="do">##### Set libPaths #####</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">.libPaths</span>(<span class="fu">c</span>(<span class="st">"/home/chongmorrison/R/x86_64-pc-linux-gnu-library/4.5"</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>            <span class="st">"/home/chongmorrison/R/4.5.0-Bioc3.21"</span>))</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">.libPaths</span>() <span class="co"># check .libPaths</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "/home/chongmorrison/R/x86_64-pc-linux-gnu-library/4.5"
+[2] "/home/chongmorrison/R/4.5.0-Bioc3.21"                 
+[3] "/usr/local/lib/R/site-library"                        
+[4] "/usr/lib/R/site-library"                              
+[5] "/usr/lib/R/library"                                   </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="do">##### Memory/parallel cores usage #####</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">Ncpus =</span> <span class="dv">12</span>) <span class="co"># adjust no. of cores for base R</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">getOption</span>(<span class="st">"Ncpus"</span>, <span class="dv">1</span>L)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 12</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="do">##### Import all required packages #####</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># data-wrangling and plots</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#library(RColorBrewer)</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#library(viridis)</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co">#library(ggpubr)</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SummarizedExperiment)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dittoSeq)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co"># analysis</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(biomaRt)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(PCAtools)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sleuth)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gplots) <span class="co"># for Venn diagrams</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rbioapi)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co"># to cite packages</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(grateful)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="do">##### Set seed for reproducibility of random sampling #####</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">584</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="ensembl-annotations---release-115" class="level3">
+<h3 class="anchored" data-anchor-id="ensembl-annotations---release-115">Ensembl annotations - <strong>release 115</strong></h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># run once and save locally for later use</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>ensembl <span class="ot">&lt;-</span> biomaRt<span class="sc">::</span><span class="fu">useEnsembl</span>(<span class="at">biomart =</span> <span class="st">"genes"</span>, <span class="at">dataset =</span> <span class="st">"hsapiens_gene_ensembl"</span>, <span class="at">version =</span> <span class="dv">115</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>annotations <span class="ot">&lt;-</span> biomaRt<span class="sc">::</span><span class="fu">getBM</span>(<span class="at">mart =</span> ensembl, <span class="at">attributes=</span><span class="fu">c</span>(<span class="st">"ensembl_transcript_id"</span>, <span class="st">"transcript_version"</span>, <span class="st">"external_gene_name"</span>, <span class="st">"ensembl_gene_id"</span>))</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>annotations<span class="sc">$</span>ensembl_transcript_id_version <span class="ot">&lt;-</span> <span class="fu">paste</span>(annotations<span class="sc">$</span>ensembl_transcript_id, annotations<span class="sc">$</span>transcript_version, <span class="at">sep=</span><span class="st">"."</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="do">## transcript-to-gene mapping</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>ttg <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">rename</span>(annotations, <span class="at">target_id =</span> ensembl_transcript_id_version, <span class="at">ens_gene =</span> ensembl_gene_id, <span class="at">ext_gene =</span> external_gene_name)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>ttg <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">select</span>(ttg, <span class="fu">c</span>(<span class="st">'target_id'</span>, <span class="st">'ens_gene'</span>, <span class="st">'ext_gene'</span>))</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(ttg, <span class="at">file =</span> <span class="st">"./ttg115.rds"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>ttg <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"./ttg115.rds"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="load-sample-metadata" class="level3">
+<h3 class="anchored" data-anchor-id="load-sample-metadata">Load sample metadata</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>metadata <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="at">file =</span> <span class="st">'./metadata_06.01.26.csv'</span>, <span class="at">sep =</span> <span class="st">','</span>, <span class="at">header=</span><span class="cn">TRUE</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(metadata)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   sample      donor donor_status tissue tissue_subregion      stim time batch
+1 A2_7_A1     GI6544      Healthy     TI                        ctl  24h three
+2 A2_7_A2     GI6544      Healthy     TI                       IL22  24h three
+3 A2_7_A3     GI6544      Healthy     TI                       IL26  24h three
+4 A2_7_A4     GI6544      Healthy     TI                  IL22+IL26  24h three
+5 A2_7_B1 TIP-OX-168      Healthy     TI                        ctl  24h three
+6 A2_7_B2 TIP-OX-168      Healthy     TI                       IL22  24h three
+  misc
+1     
+2     
+3     
+4     
+5     
+6     
+                                                                                                                             path
+1 /home/chongmorrison/Dropbox/VCM-StarBook/ResearchProjects/theliorbio/analyses/rnaseq/kallisto_v0.46.1_e115/A2_7_A1/abundance.h5
+2 /home/chongmorrison/Dropbox/VCM-StarBook/ResearchProjects/theliorbio/analyses/rnaseq/kallisto_v0.46.1_e115/A2_7_A2/abundance.h5
+3 /home/chongmorrison/Dropbox/VCM-StarBook/ResearchProjects/theliorbio/analyses/rnaseq/kallisto_v0.46.1_e115/A2_7_A3/abundance.h5
+4 /home/chongmorrison/Dropbox/VCM-StarBook/ResearchProjects/theliorbio/analyses/rnaseq/kallisto_v0.46.1_e115/A2_7_A4/abundance.h5
+5 /home/chongmorrison/Dropbox/VCM-StarBook/ResearchProjects/theliorbio/analyses/rnaseq/kallisto_v0.46.1_e115/A2_7_B1/abundance.h5
+6 /home/chongmorrison/Dropbox/VCM-StarBook/ResearchProjects/theliorbio/analyses/rnaseq/kallisto_v0.46.1_e115/A2_7_B2/abundance.h5</code></pre>
+</div>
+</div>
+</section>
+<section id="explore-experimental-covariates-vs-conditions" class="level3">
+<h3 class="anchored" data-anchor-id="explore-experimental-covariates-vs-conditions">Explore experimental covariates vs conditions</h3>
+<p>Extract sample-of-interest i.e.&nbsp;<code>Healthy</code> <code>colonic</code> and <code>TI</code> samples. Exclude <code>IL24_exp</code> samples.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>metadata.CO <span class="ot">&lt;-</span> <span class="fu">subset</span>(metadata, donor_status <span class="sc">==</span> <span class="st">"Healthy"</span> <span class="sc">&amp;</span> tissue <span class="sc">==</span> <span class="st">"colonic"</span> <span class="sc">&amp;</span> <span class="sc">!</span>misc <span class="sc">==</span> <span class="st">"IL24_exp"</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>metadata.TI <span class="ot">&lt;-</span> <span class="fu">subset</span>(metadata, donor_status <span class="sc">==</span> <span class="st">"Healthy"</span> <span class="sc">&amp;</span> tissue <span class="sc">==</span> <span class="st">"TI"</span> <span class="sc">&amp;</span> <span class="sc">!</span>misc <span class="sc">==</span> <span class="st">"IL24_exp"</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Alternative code</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">#metadata.CO &lt;- metadata %&gt;% filter(donor_status == "Healthy", tissue == "colonic", !misc == "IL24_exp")</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Outputs not shown to avoid heavy re-computation of different PCAs and <code>sleuth_fit</code> attempts - learned that samples form overlapping groups based on <code>time</code>, <code>batch</code>, and <code>donor</code>. So, going forward by analysing <code>24h</code> and <code>48h</code> separately, and fit model where <code>donor</code> is specified as the covariate (which also accounts for the <code>batch</code> covariate) - see PCAs below.</p>
+<p>Split datasets by <code>time</code>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>metadata.CO<span class="fl">.24</span>h <span class="ot">&lt;-</span> <span class="fu">subset</span>(metadata.CO, <span class="fu">grepl</span>(<span class="st">"24h"</span>, time))</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>metadata.CO<span class="fl">.48</span>h <span class="ot">&lt;-</span> <span class="fu">subset</span>(metadata.CO, <span class="fu">grepl</span>(<span class="st">"48h"</span>, time))</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(metadata.CO<span class="fl">.24</span>h) <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(metadata.CO<span class="fl">.48</span>h) <span class="ot">&lt;-</span> <span class="cn">NULL</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>metadata.TI<span class="fl">.24</span>h <span class="ot">&lt;-</span> <span class="fu">subset</span>(metadata.TI, <span class="fu">grepl</span>(<span class="st">"24h"</span>, time))</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>metadata.TI<span class="fl">.48</span>h <span class="ot">&lt;-</span> <span class="fu">subset</span>(metadata.TI, <span class="fu">grepl</span>(<span class="st">"48h"</span>, time))</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(metadata.TI<span class="fl">.24</span>h) <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(metadata.TI<span class="fl">.48</span>h) <span class="ot">&lt;-</span> <span class="cn">NULL</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="hours---colonic-and-ti" class="level2">
+<h2 class="anchored" data-anchor-id="hours---colonic-and-ti">48 hours - colonic and TI</h2>
+<p>Build <strong>sleuth</strong> object from metadata and <strong>kallisto</strong> abundances.</p>
+<p><code>target_mapping</code> = transcript groupings into genes, where <code>aggregation_column</code> is the column in <code>target_mapping</code> used to aggregate the transcripts. When both <code>target_mapping</code> and <code>aggregation_column</code> are provided, <strong>sleuth</strong> will automatically run in gene mode, <strong>returning gene differential expression results that came from the aggregation of transcript p-values</strong>.</p>
+<p><code>transform_fun_counts</code> (see <a href="https://hbctraining.github.io/DGE_workshop_salmon/lessons/09_sleuth.html">here</a>) so that downstream output fold changes are log2.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># run this on the command line outside of RStudio to make use of num_cores</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>so.CO<span class="fl">.48</span> <span class="ot">&lt;-</span> <span class="fu">sleuth_prep</span>(metadata.CO<span class="fl">.48</span>h, </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">target_mapping =</span> ttg, <span class="at">aggregation_column =</span> <span class="st">"ens_gene"</span>, </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">extra_bootstrap_summary =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">read_bootstrap_tpm =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>                  <span class="at">transform_fun_counts =</span> <span class="cf">function</span>(x) <span class="fu">log2</span>(x <span class="sc">+</span> <span class="fl">0.5</span>),</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>                  <span class="at">num_cores =</span> <span class="dv">2</span>)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>so.TI<span class="fl">.48</span> <span class="ot">&lt;-</span> <span class="fu">sleuth_prep</span>(metadata.TI<span class="fl">.48</span>h, </span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>                  <span class="at">target_mapping =</span> ttg, <span class="at">aggregation_column =</span> <span class="st">"ens_gene"</span>, </span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>                  <span class="at">extra_bootstrap_summary =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>                  <span class="at">read_bootstrap_tpm =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>                  <span class="at">transform_fun_counts =</span> <span class="cf">function</span>(x) <span class="fu">log2</span>(x <span class="sc">+</span> <span class="fl">0.5</span>),</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>                  <span class="at">num_cores =</span> <span class="dv">2</span>)</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="co"># save sleuth objects to reload without recomputing bootstraps</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(so.CO<span class="fl">.48</span>, <span class="at">file =</span> <span class="st">"./05_diffexp_sleuth-so-colonic-48h.rds"</span>)</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(so.TI<span class="fl">.48</span>, <span class="at">file =</span> <span class="st">"./05_diffexp_sleuth-so-TI-48h.rds"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>so.CO<span class="fl">.48</span> <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"./05_diffexp_sleuth-so-colonic-48h.rds"</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>so.TI<span class="fl">.48</span> <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"./05_diffexp_sleuth-so-TI-48h.rds"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># covariates</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_pca</span>(so.CO<span class="fl">.48</span>, <span class="at">units =</span> <span class="st">"tpm"</span>, <span class="at">color_by =</span> <span class="st">"donor"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: `aes_string()` was deprecated in ggplot2 3.0.0.
+ℹ Please use tidy evaluation idioms with `aes()`.
+ℹ See also `vignette("ggplot2-in-packages")` for more information.
+ℹ The deprecated feature was likely used in the sleuth package.
+  Please report the issue at &lt;https://github.com/pachterlab/sleuth/issues&gt;.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06_diffexp_sleuth_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_pca</span>(so.CO<span class="fl">.48</span>, <span class="at">units =</span> <span class="st">"tpm"</span>, <span class="at">color_by =</span> <span class="st">"batch"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06_diffexp_sleuth_files/figure-html/unnamed-chunk-11-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_pca</span>(so.TI<span class="fl">.48</span>, <span class="at">units =</span> <span class="st">"tpm"</span>, <span class="at">color_by =</span> <span class="st">"donor"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06_diffexp_sleuth_files/figure-html/unnamed-chunk-11-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_pca</span>(so.TI<span class="fl">.48</span>, <span class="at">units =</span> <span class="st">"tpm"</span>, <span class="at">color_by =</span> <span class="st">"batch"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06_diffexp_sleuth_files/figure-html/unnamed-chunk-11-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># condition</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_pca</span>(so.CO<span class="fl">.48</span>, <span class="at">units =</span> <span class="st">"tpm"</span>, <span class="at">color_by =</span> <span class="st">"stim"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06_diffexp_sleuth_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_pca</span>(so.TI<span class="fl">.48</span>, <span class="at">units =</span> <span class="st">"tpm"</span>, <span class="at">color_by =</span> <span class="st">"stim"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06_diffexp_sleuth_files/figure-html/unnamed-chunk-12-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="test-for-differentially-expressed-genes---multi-condition" class="level3">
+<h3 class="anchored" data-anchor-id="test-for-differentially-expressed-genes---multi-condition">Test for differentially-expressed genes - multi-condition</h3>
+<p>Fit a <code>reduced</code> model, which includes the parameters corresponding to experimental covariates we are controlling for i.e.&nbsp;<em>donor</em> (which will account for <em>batch</em>).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>so.CO<span class="fl">.48</span> <span class="ot">&lt;-</span> <span class="fu">sleuth_fit</span>(so.CO<span class="fl">.48</span>, <span class="sc">~</span>donor, <span class="st">"reduced"</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>so.TI<span class="fl">.48</span> <span class="ot">&lt;-</span> <span class="fu">sleuth_fit</span>(so.TI<span class="fl">.48</span>, <span class="sc">~</span>donor, <span class="st">"reduced"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Fit the <code>full</code> model which includes all parameters including <em>stim</em>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>so.CO<span class="fl">.48</span> <span class="ot">&lt;-</span> <span class="fu">sleuth_fit</span>(so.CO<span class="fl">.48</span>, <span class="sc">~</span>donor <span class="sc">+</span> stim, <span class="st">"full"</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>so.TI<span class="fl">.48</span> <span class="ot">&lt;-</span> <span class="fu">sleuth_fit</span>(so.TI<span class="fl">.48</span>, <span class="sc">~</span>donor <span class="sc">+</span> stim, <span class="st">"full"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Re-save sleuth objects to reload without recomputing everything</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(so.CO<span class="fl">.48</span>, <span class="at">file =</span> <span class="st">"./05_diffexp_sleuth-so-colonic-48h.rds"</span>)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(so.TI<span class="fl">.48</span>, <span class="at">file =</span> <span class="st">"./05_diffexp_sleuth-so-TI-48h.rds"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Check fitted models. Note that <code>ctl</code> is <strong>not</strong> shown as a coefficient for <code>stim</code>, as it is denoted as the base level (the level not shown is the base level). <strong>sleuth</strong> automatically takes the first level (alphabetical by default) in the variable being tested to compare other conditions with.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>so.CO<span class="fl">.48</span> <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"./05_diffexp_sleuth-so-colonic-48h.rds"</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>so.TI<span class="fl">.48</span> <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"./05_diffexp_sleuth-so-TI-48h.rds"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">models</span>(so.CO<span class="fl">.48</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[  reduced  ]
+formula:  ~donor 
+data modeled:  obs_counts 
+transform sync'ed:  TRUE 
+coefficients:
+    (Intercept)
+    donorGI7641
+    donorTIP-OX-093
+    donorTIP-OX-189
+[  full  ]
+formula:  ~donor + stim 
+data modeled:  obs_counts 
+transform sync'ed:  TRUE 
+coefficients:
+    (Intercept)
+    donorGI7641
+    donorTIP-OX-093
+    donorTIP-OX-189
+    stimIL22
+    stimIL22+IL26
+    stimIL26</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">models</span>(so.TI<span class="fl">.48</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[  reduced  ]
+formula:  ~donor 
+data modeled:  obs_counts 
+transform sync'ed:  TRUE 
+coefficients:
+    (Intercept)
+    donorTIP-OX-1196
+    donorTIP-OX-135
+    donorTIP-OX-168
+[  full  ]
+formula:  ~donor + stim 
+data modeled:  obs_counts 
+transform sync'ed:  TRUE 
+coefficients:
+    (Intercept)
+    donorTIP-OX-1196
+    donorTIP-OX-135
+    donorTIP-OX-168
+    stimIL22
+    stimIL22+IL26
+    stimIL26</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># in case one needs to set/change base level. Do this before sleuth_prep:</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>metadata<span class="sc">$</span>stim <span class="ot">&lt;-</span> <span class="fu">relevel</span>(<span class="fu">factor</span>(metadata<span class="sc">$</span>stim), <span class="at">ref =</span> <span class="st">"ctl"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Then compare the <code>full</code> model to the <code>reduced</code> model with the likelihood ratio test (LRT). Using the likelihood ratio test, sleuth identifies genes whose abundances are significantly better explained when IL treatment (<em>stim</em>) is taken into account, while accounting for baseline differences that may be explained by <em>donor</em> (and/or <em>batch</em>).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>so.CO<span class="fl">.48</span> <span class="ot">&lt;-</span> <span class="fu">sleuth_lrt</span>(so.CO<span class="fl">.48</span>, <span class="st">"reduced"</span>, <span class="st">"full"</span>)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>so.TI<span class="fl">.48</span> <span class="ot">&lt;-</span> <span class="fu">sleuth_lrt</span>(so.TI<span class="fl">.48</span>, <span class="st">"reduced"</span>, <span class="st">"full"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Use the <code>full</code> model with Wald test (WT) to compute <code>b</code> beta values, which approximates the log2 fold changes between conditions.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>so.CO<span class="fl">.48</span> <span class="ot">&lt;-</span> <span class="fu">sleuth_wt</span>(so.CO<span class="fl">.48</span>, <span class="at">which_beta =</span> <span class="st">"stimIL22"</span>, <span class="at">which_model =</span> <span class="st">"full"</span>) <span class="co"># IL22 vs ctl</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>so.CO<span class="fl">.48</span> <span class="ot">&lt;-</span> <span class="fu">sleuth_wt</span>(so.CO<span class="fl">.48</span>, <span class="at">which_beta =</span> <span class="st">"stimIL22+IL26"</span>, <span class="at">which_model =</span> <span class="st">"full"</span>) <span class="co"># IL22+26 vs ctl</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>so.CO<span class="fl">.48</span> <span class="ot">&lt;-</span> <span class="fu">sleuth_wt</span>(so.CO<span class="fl">.48</span>, <span class="at">which_beta =</span> <span class="st">"stimIL26"</span>, <span class="at">which_model =</span> <span class="st">"full"</span>) <span class="co"># IL26 vs ctl</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>so.TI<span class="fl">.48</span> <span class="ot">&lt;-</span> <span class="fu">sleuth_wt</span>(so.TI<span class="fl">.48</span>, <span class="at">which_beta =</span> <span class="st">"stimIL22"</span>, <span class="at">which_model =</span> <span class="st">"full"</span>) <span class="co"># IL22 vs ctl</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>so.TI<span class="fl">.48</span> <span class="ot">&lt;-</span> <span class="fu">sleuth_wt</span>(so.TI<span class="fl">.48</span>, <span class="at">which_beta =</span> <span class="st">"stimIL22+IL26"</span>, <span class="at">which_model =</span> <span class="st">"full"</span>) <span class="co"># IL22+26 vs ctl</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>so.TI<span class="fl">.48</span> <span class="ot">&lt;-</span> <span class="fu">sleuth_wt</span>(so.TI<span class="fl">.48</span>, <span class="at">which_beta =</span> <span class="st">"stimIL26"</span>, <span class="at">which_model =</span> <span class="st">"full"</span>) <span class="co"># IL26 vs ctl</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Obtain gene- and transcript-level differential expression results from LRT. Sleuth uses the p-values from comparing transcripts to make a gene-level determination and perform gene differential expression.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>sleuth_table_gene.CO<span class="fl">.48</span> <span class="ot">&lt;-</span> <span class="fu">sleuth_results</span>(so.CO<span class="fl">.48</span>, <span class="st">"reduced:full"</span>, <span class="st">"lrt"</span>, <span class="at">show_all =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>sleuth_table_gene.CO<span class="fl">.48</span> <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(sleuth_table_gene.CO<span class="fl">.48</span>, qval <span class="sc">&lt;=</span> <span class="fl">0.01</span>)</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sleuth_table_gene.CO<span class="fl">.48</span>, <span class="dv">20</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         target_id ext_gene num_aggregated_transcripts sum_mean_obs_counts
+1  ENSG00000187908    DMBT1                         19           177.54281
+2  ENSG00000079385  CEACAM1                         17           130.89418
+3  ENSG00000196136 SERPINA3                         14            73.93712
+4  ENSG00000197249 SERPINA1                         26           117.95535
+5  ENSG00000008517     IL32                         39           228.34755
+6  ENSG00000089356    FXYD3                         43           293.52087
+7  ENSG00000148346     LCN2                          9            73.06262
+8  ENSG00000105388  CEACAM5                         32           291.16648
+9  ENSG00000196352     CD55                         24           157.70022
+10 ENSG00000145287    PLAC8                         16           105.79321
+11 ENSG00000123843    C4BPB                         15            82.46697
+12 ENSG00000185215  TNFAIP2                         15           112.05121
+13 ENSG00000182240    BACE2                         12           100.62690
+14 ENSG00000205403      CFI                         10            63.59051
+15 ENSG00000105835    NAMPT                         28           154.44803
+16 ENSG00000198959     TGM2                          8            51.61621
+17 ENSG00000150593    PDCD4                         25           195.04327
+18 ENSG00000138744     NAAA                         11            70.03281
+19 ENSG00000140274   DUOXA2                          4            48.73046
+20 ENSG00000176153     GPX2                          4            43.54259
+            pval          qval
+1  1.273989e-179 2.223365e-175
+2  4.176630e-156 3.644527e-152
+3  5.975601e-152 3.476206e-148
+4  2.359961e-148 1.029651e-144
+5  3.110031e-138 1.085525e-134
+6   5.433885e-98  1.580536e-94
+7   3.680145e-95  9.175128e-92
+8   2.648053e-87  5.776728e-84
+9   4.284855e-87  8.308811e-84
+10  2.871408e-81  5.011182e-78
+11  5.008342e-80  7.945962e-77
+12  3.096276e-78  4.503017e-75
+13  8.476887e-67  1.137989e-63
+14  6.586611e-63  8.210681e-60
+15  2.970208e-60  3.455738e-57
+16  3.776276e-59  4.118973e-56
+17  4.079768e-59  4.188242e-56
+18  1.386619e-58  1.344404e-55
+19  8.946492e-58  8.217588e-55
+20  1.536056e-55  1.340362e-52</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>sleuth_table_gene.TI<span class="fl">.48</span> <span class="ot">&lt;-</span> <span class="fu">sleuth_results</span>(so.TI<span class="fl">.48</span>, <span class="st">"reduced:full"</span>, <span class="st">"lrt"</span>, <span class="at">show_all =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>sleuth_table_gene.TI<span class="fl">.48</span> <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(sleuth_table_gene.TI<span class="fl">.48</span>, qval <span class="sc">&lt;=</span> <span class="fl">0.01</span>)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sleuth_table_gene.TI<span class="fl">.48</span>, <span class="dv">20</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         target_id ext_gene num_aggregated_transcripts sum_mean_obs_counts
+1  ENSG00000187908    DMBT1                         20           204.07597
+2  ENSG00000197249 SERPINA1                         27           136.09163
+3  ENSG00000196136 SERPINA3                          8            41.08027
+4  ENSG00000172023    REG1B                          5            22.01169
+5  ENSG00000105388  CEACAM5                         21           137.18740
+6  ENSG00000115386    REG1A                          5            26.53484
+7  ENSG00000160868   CYP3A4                         15           108.90544
+8  ENSG00000205403      CFI                         11            64.24690
+9  ENSG00000182240    BACE2                         12            85.24875
+10 ENSG00000150593    PDCD4                         23           154.14522
+11 ENSG00000118849  RARRES1                          9            75.15557
+12 ENSG00000137757    CASP5                         10            73.54159
+13 ENSG00000118777    ABCG2                         17           120.20113
+14 ENSG00000123843    C4BPB                         16            83.21726
+15 ENSG00000106258   CYP3A5                         18           129.84463
+16 ENSG00000166866    MYO1A                         14           106.67593
+17 ENSG00000198363     ASPH                         40           239.80953
+18 ENSG00000198959     TGM2                         10            56.11461
+19 ENSG00000079385  CEACAM1                         15            98.94706
+20 ENSG00000140279    DUOX2                          4            33.67596
+            pval          qval
+1   0.000000e+00  0.000000e+00
+2  6.186260e-132 5.019531e-128
+3  5.509251e-126 2.980138e-122
+4  3.741277e-113 1.517836e-109
+5  1.088244e-107 3.532004e-104
+6  4.056833e-107 1.097238e-103
+7  7.417280e-103  1.719538e-99
+8   1.182276e-87  2.398247e-84
+9   2.032078e-86  3.664062e-83
+10  4.579065e-75  7.430906e-72
+11  9.713605e-70  1.433022e-66
+12  1.270153e-69  1.717670e-66
+13  3.758234e-68  4.691432e-65
+14  1.286206e-57  1.490896e-54
+15  4.096243e-56  4.431588e-53
+16  7.658585e-56  7.767720e-53
+17  2.390765e-55  2.282196e-52
+18  1.136228e-54  1.024373e-51
+19  3.058621e-54  2.612384e-51
+20  4.232892e-54  3.434568e-51</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># without gene aggregation</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>sleuth_table_tx.CO<span class="fl">.48</span> <span class="ot">&lt;-</span> <span class="fu">sleuth_results</span>(so.CO<span class="fl">.48</span>, <span class="st">"reduced:full"</span>, <span class="st">"lrt"</span>, <span class="at">show_all =</span> <span class="cn">FALSE</span>, <span class="at">pval_aggregate =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>sleuth_table_tx.CO<span class="fl">.48</span> <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(sleuth_table_tx.CO<span class="fl">.48</span>, qval <span class="sc">&lt;=</span> <span class="fl">0.01</span>)</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sleuth_table_tx.CO<span class="fl">.48</span>, <span class="dv">20</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            target_id        ens_gene ext_gene         pval         qval
+1   ENST00000306390.7 ENSG00000171236     LRG1 1.235223e-23 1.423940e-18
+2   ENST00000264382.8 ENSG00000090402       SI 3.057012e-23 1.762031e-18
+3   ENST00000408968.4 ENSG00000185885   IFITM1 1.504352e-22 5.780622e-18
+4   ENST00000494317.1 ENSG00000148346     LCN2 8.044375e-20 2.318349e-15
+5   ENST00000954626.1 ENSG00000198959     TGM2 1.219500e-19 2.811631e-15
+6   ENST00000298295.4 ENSG00000165507    DEPP1 2.054576e-19 3.947456e-15
+7   ENST00000517618.5 ENSG00000133742      CA1 6.059117e-19 8.731037e-15
+8   ENST00000277480.7 ENSG00000148346     LCN2 5.971242e-19 8.731037e-15
+9   ENST00000361820.6 ENSG00000198785   GRIN3A 1.187888e-18 1.047121e-14
+10  ENST00000470902.5 ENSG00000148346     LCN2 1.299335e-18 1.047121e-14
+11  ENST00000668486.1 ENSG00000187908    DMBT1 1.453351e-18 1.047121e-14
+12  ENST00000403444.7 ENSG00000079385  CEACAM1 1.176969e-18 1.047121e-14
+13  ENST00000403461.5 ENSG00000079385  CEACAM1 1.317686e-18 1.047121e-14
+14  ENST00000509973.6 ENSG00000145287    PLAC8 1.234484e-18 1.047121e-14
+15  ENST00000868346.1 ENSG00000148334   PTGES2 1.392993e-18 1.047121e-14
+16  ENST00000542583.7 ENSG00000103534     TMC5 9.318553e-19 1.047121e-14
+17  ENST00000419625.6 ENSG00000104537   ANXA13 2.155833e-18 1.461883e-14
+18  ENST00000399808.5 ENSG00000142089   IFITM3 6.030914e-18 2.962927e-14
+19 ENST00000340010.10 ENSG00000091138  SLC26A3 6.215311e-18 2.962927e-14
+20  ENST00000379416.4 ENSG00000158125      XDH 4.742216e-18 2.962927e-14
+   test_stat       rss degrees_free  mean_obs    var_obs     tech_var  sigma_sq
+1  109.76111  19.24758            3 11.593496  1.1660092 9.259536e-04 0.6864878
+2  107.93224  42.77050            3 12.765283  3.5990916 5.078433e-04 1.5270100
+3  104.71552  53.20775            3 10.368482  1.8137509 4.777279e-03 1.8954995
+4   92.02533  36.16841            3  9.132457  1.4124702 5.115904e-03 1.2866131
+5   91.18423 127.49320            3 12.595109  4.9807012 7.060548e-03 4.5462680
+6   90.12959  21.43516            3  9.536002  1.1835363 4.078133e-03 0.7614635
+7   87.94257 204.05960            3  7.695544 18.1784216 9.813936e-02 7.1897036
+8   87.97212  23.18251            3 15.859321  1.1531591 4.584246e-05 0.8279009
+9   86.58092  27.81339            3  8.038091  1.2652083 1.006949e-02 0.9832658
+10  86.39952  40.75407            3  8.195903  1.6660615 1.756382e-02 1.4379388
+11  86.17291 248.80744            3 10.283692  8.2084308 1.174768e-01 8.7685032
+12  86.59960  31.36575            3 14.433828  1.4884149 4.268804e-04 1.1197784
+13  86.37115  34.46001            3  9.852652  1.6504659 1.146011e-02 1.2192547
+14  86.50309  11.34141            3 10.954846  0.5774066 2.172431e-03 0.4028779
+15  86.25872  16.69996            3  9.664583  0.7560960 5.712487e-03 0.5907146
+16  87.07196  15.63766            3 12.963839  0.9685068 5.006234e-03 0.5534818
+17  85.37521  40.17269            3  8.326496  1.9059786 3.789645e-02 1.3968424
+18  83.29365  30.69924            3 11.450104  1.2076700 1.040764e-03 1.0953608
+19  83.23270  65.63602            3 12.355590  3.9898858 1.242247e-03 2.3429013
+20  83.78013  26.86751            3 12.753135  1.5573082 4.251863e-03 0.9553022
+   smooth_sigma_sq final_sigma_sq
+1       0.04346429      0.6864878
+2       0.03873629      1.5270100
+3       0.05663691      1.8954995
+4       0.08354457      1.2866131
+5       0.03903510      4.5462680
+6       0.07275911      0.7614635
+7       0.14572649      7.1897036
+8       0.05730877      0.8279009
+9       0.12577452      0.9832658
+10      0.11798854      1.4379388
+11      0.05796276      8.7685032
+12      0.04242040      1.1197784
+13      0.06575753      1.2192547
+14      0.04905905      0.4028779
+15      0.06977301      0.5907146
+16      0.03854350      0.5534818
+17      0.11209380      1.3968424
+18      0.04451045      1.0953608
+19      0.03966888      2.3429013
+20      0.03875351      0.9553022</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># without gene aggregation</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>sleuth_table_tx.TI<span class="fl">.48</span> <span class="ot">&lt;-</span> <span class="fu">sleuth_results</span>(so.TI<span class="fl">.48</span>, <span class="st">"reduced:full"</span>, <span class="st">"lrt"</span>, <span class="at">show_all =</span> <span class="cn">FALSE</span>, <span class="at">pval_aggregate =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>sleuth_table_tx.TI<span class="fl">.48</span> <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(sleuth_table_tx.TI<span class="fl">.48</span>, qval <span class="sc">&lt;=</span> <span class="fl">0.01</span>)</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sleuth_table_tx.TI<span class="fl">.48</span>, <span class="dv">20</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            target_id        ens_gene ext_gene         pval         qval
+1   ENST00000305089.8 ENSG00000172023    REG1B 5.414622e-35 5.294146e-30
+2   ENST00000368909.7 ENSG00000187908    DMBT1 8.350784e-33 2.041245e-28
+3   ENST00000619379.1 ENSG00000187908    DMBT1 8.350784e-33 2.041245e-28
+4   ENST00000652446.2 ENSG00000187908    DMBT1 8.350784e-33 2.041245e-28
+5  ENST00000296695.10 ENSG00000164266   SPINK1 7.117535e-32 1.391834e-27
+6   ENST00000479258.5 ENSG00000172023    REG1B 1.129834e-31 1.841159e-27
+7   ENST00000433503.2 ENSG00000241534      CFB 5.335142e-31 5.216435e-27
+8   ENST00000419411.6 ENSG00000242335      CFB 5.335142e-31 5.216435e-27
+9   ENST00000427888.2 ENSG00000239754      CFB 5.335142e-31 5.216435e-27
+10  ENST00000436692.2 ENSG00000243570      CFB 5.335142e-31 5.216435e-27
+11  ENST00000344338.7 ENSG00000187908    DMBT1 1.536460e-28 1.155595e-24
+12  ENST00000368955.7 ENSG00000187908    DMBT1 1.536460e-28 1.155595e-24
+13  ENST00000666315.1 ENSG00000187908    DMBT1 1.427473e-28 1.155595e-24
+14  ENST00000233735.2 ENSG00000115386    REG1A 1.786109e-28 1.247406e-24
+15  ENST00000664003.1 ENSG00000187908    DMBT1 3.864644e-28 2.519104e-24
+16  ENST00000954626.1 ENSG00000198959     TGM2 5.816784e-27 3.554600e-23
+17 ENST00000278175.10 ENSG00000148926      ADM 1.556350e-26 8.951302e-23
+18  ENST00000321348.9 ENSG00000071967   CYBRD1 5.447725e-26 2.959174e-22
+19  ENST00000488524.1 ENSG00000115386    REG1A 6.264312e-26 3.223648e-22
+20  ENST00000968102.1 ENSG00000115386    REG1A 9.277611e-26 4.535592e-22
+   test_stat        rss degrees_free  mean_obs   var_obs     tech_var  sigma_sq
+1   162.4538 1949.75012            3  8.047202 63.425741 0.2725611108 69.361372
+2   152.3133  205.35504            3 14.604498  6.897024 0.0018214420  7.332287
+3   152.3133  205.35504            3 14.604498  6.897024 0.0018214420  7.332287
+4   152.3133  205.35504            3 14.604498  6.897024 0.0018214420  7.332287
+5   147.9993  179.88077            3 10.098271  5.876349 0.0050856261  6.419228
+6   147.0689 1199.42677            3  5.186544 38.894402 0.0275776459 42.809093
+7   143.9432   33.30165            3 11.316364  1.296531 0.0003307131  1.189014
+8   143.9432   33.30165            3 11.316364  1.296531 0.0003307131  1.189014
+9   143.9432   33.30165            3 11.316364  1.296531 0.0003307131  1.189014
+10  143.9432   33.30165            3 11.316364  1.296531 0.0003307131  1.189014
+11  132.5360  230.68537            3 13.887295  8.038046 0.0063385703  8.232425
+12  132.5360  230.68537            3 13.887295  8.038046 0.0063385703  8.232425
+13  132.6842  215.80152            3 14.173559  7.075878 0.0112040304  7.695993
+14  132.2326 1522.37881            3 10.353114 51.654642 0.2473097899 54.123362
+15  130.6773  237.08323            3 10.738901  7.689294 0.0068500001  8.460408
+16  125.2123   50.60108            3 13.196124  2.168404 0.0013257002  1.805856
+17  123.2282   50.76319            3  9.512479  2.688422 0.0101131546  1.802858
+18  120.7021   39.37635            3 14.083600  1.481119 0.0004748490  1.405823
+19  120.4205  842.04775            3  5.280611 28.065190 0.2134424151 29.859692
+20  119.6285  910.28252            3  4.392304 29.532413 0.2013295753 32.308760
+   smooth_sigma_sq final_sigma_sq
+1       0.15209019      69.361372
+2       0.06085628       7.332287
+3       0.06085628       7.332287
+4       0.06085628       7.332287
+5       0.06228478       6.419228
+6       0.86160729      42.809093
+7       0.04600158       1.189014
+8       0.04600158       1.189014
+9       0.04600158       1.189014
+10      0.04600158       1.189014
+11      0.05003995       8.232425
+12      0.05003995       8.232425
+13      0.05367722       7.695993
+14      0.05753199      54.123362
+15      0.05181262       8.460408
+16      0.04429362       1.805856
+17      0.07685761       1.802858
+18      0.05244474       1.405823
+19      0.81450847      29.859692
+20      1.31798875      32.308760</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># save result tables</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(sleuth_table_gene.CO<span class="fl">.48</span>, <span class="at">file =</span> <span class="st">"./outputs/05_diffexp_sleuth-genes-qval001-stim-colonic-48h.csv"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(sleuth_table_tx.CO<span class="fl">.48</span>, <span class="at">file =</span> <span class="st">"./outputs/05_diffexp_sleuth-transcripts-qval001-stim-colonic-48h.csv"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="co"># save result tables</span></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(sleuth_table_gene.TI<span class="fl">.48</span>, <span class="at">file =</span> <span class="st">"./outputs/05_diffexp_sleuth-genes-qval001-stim-TI-48h.csv"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(sleuth_table_tx.TI<span class="fl">.48</span>, <span class="at">file =</span> <span class="st">"./outputs/05_diffexp_sleuth-transcripts-qval001-stim-TI-48h.csv"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ul>
+<li><strong>This clearly indicates there is an effect with IL22 and/or IL26 stimulation compared to control.</strong> IL22- and/or IL26-specific effects can be explored with results from the two condition (pairwise) Wald tests, but we will use LRT in the next section to perform “clean” pairwise comparisons.</li>
+</ul>
+<p>Save gene- and transcript-level differential expression results from WT (all targets) for later use.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>((<span class="fu">sleuth_results</span>(so.CO<span class="fl">.48</span>, <span class="st">"stimIL22"</span>, <span class="st">"wt"</span>, <span class="st">"full"</span>, <span class="at">show_all =</span> <span class="cn">FALSE</span>)), <span class="at">file =</span> <span class="st">"./outputs/05_diffexp_sleuth-genes-wt-all_IL22-ctl_colonic-48h.csv"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>((<span class="fu">sleuth_results</span>(so.CO<span class="fl">.48</span>, <span class="st">"stimIL22"</span>, <span class="st">"wt"</span>, <span class="st">"full"</span>, <span class="at">show_all =</span> <span class="cn">FALSE</span>, <span class="at">pval_aggregate =</span> <span class="cn">FALSE</span>)), <span class="at">file =</span> <span class="st">"./outputs/05_diffexp_sleuth-transcripts-wt-all_IL22-ctl_colonic-48h.csv"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>((<span class="fu">sleuth_results</span>(so.TI<span class="fl">.48</span>, <span class="st">"stimIL22"</span>, <span class="st">"wt"</span>, <span class="st">"full"</span>, <span class="at">show_all =</span> <span class="cn">FALSE</span>)), <span class="at">file =</span> <span class="st">"./outputs/05_diffexp_sleuth-genes-wt-all_IL22-ctl_TI-48h.csv"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>((<span class="fu">sleuth_results</span>(so.TI<span class="fl">.48</span>, <span class="st">"stimIL22"</span>, <span class="st">"wt"</span>, <span class="st">"full"</span>, <span class="at">show_all =</span> <span class="cn">FALSE</span>, <span class="at">pval_aggregate =</span> <span class="cn">FALSE</span>)), <span class="at">file =</span> <span class="st">"./outputs/05_diffexp_sleuth-transcripts-wt-all_IL22-ctl_TI-48h.csv"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>((<span class="fu">sleuth_results</span>(so.CO<span class="fl">.48</span>, <span class="st">"stimIL22+IL26"</span>, <span class="st">"wt"</span>, <span class="st">"full"</span>, <span class="at">show_all =</span> <span class="cn">FALSE</span>)), <span class="at">file =</span> <span class="st">"./outputs/05_diffexp_sleuth-genes-wt-all_IL22+26-ctl_colonic-48h.csv"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>((<span class="fu">sleuth_results</span>(so.CO<span class="fl">.48</span>, <span class="st">"stimIL22+IL26"</span>, <span class="st">"wt"</span>, <span class="st">"full"</span>, <span class="at">show_all =</span> <span class="cn">FALSE</span>, <span class="at">pval_aggregate =</span> <span class="cn">FALSE</span>)), <span class="at">file =</span> <span class="st">"./outputs/05_diffexp_sleuth-transcripts-wt-all_IL22+26-ctl_colonic-48h.csv"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>((<span class="fu">sleuth_results</span>(so.TI<span class="fl">.48</span>, <span class="st">"stimIL22+IL26"</span>, <span class="st">"wt"</span>, <span class="st">"full"</span>, <span class="at">show_all =</span> <span class="cn">FALSE</span>)), <span class="at">file =</span> <span class="st">"./outputs/05_diffexp_sleuth-genes-wt-all_IL22+26-ctl_TI-48h.csv"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>((<span class="fu">sleuth_results</span>(so.TI<span class="fl">.48</span>, <span class="st">"stimIL22+IL26"</span>, <span class="st">"wt"</span>, <span class="st">"full"</span>, <span class="at">show_all =</span> <span class="cn">FALSE</span>, <span class="at">pval_aggregate =</span> <span class="cn">FALSE</span>)), <span class="at">file =</span> <span class="st">"./outputs/05_diffexp_sleuth-transcripts-wt-all_IL22+26-ctl_TI-48h.csv"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>((<span class="fu">sleuth_results</span>(so.CO<span class="fl">.48</span>, <span class="st">"stimIL26"</span>, <span class="st">"wt"</span>, <span class="st">"full"</span>, <span class="at">show_all =</span> <span class="cn">FALSE</span>)), <span class="at">file =</span> <span class="st">"./outputs/05_diffexp_sleuth-genes-wt-all_IL26-ctl_colonic-48h.csv"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>((<span class="fu">sleuth_results</span>(so.CO<span class="fl">.48</span>, <span class="st">"stimIL26"</span>, <span class="st">"wt"</span>, <span class="st">"full"</span>, <span class="at">show_all =</span> <span class="cn">FALSE</span>, <span class="at">pval_aggregate =</span> <span class="cn">FALSE</span>)), <span class="at">file =</span> <span class="st">"./outputs/05_diffexp_sleuth-transcripts-wt-all_IL26-ctl_colonic-48h.csv"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>((<span class="fu">sleuth_results</span>(so.TI<span class="fl">.48</span>, <span class="st">"stimIL26"</span>, <span class="st">"wt"</span>, <span class="st">"full"</span>, <span class="at">show_all =</span> <span class="cn">FALSE</span>)), <span class="at">file =</span> <span class="st">"./outputs/05_diffexp_sleuth-genes-wt-all_IL26-ctl_TI-48h.csv"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>((<span class="fu">sleuth_results</span>(so.TI<span class="fl">.48</span>, <span class="st">"stimIL26"</span>, <span class="st">"wt"</span>, <span class="st">"full"</span>, <span class="at">show_all =</span> <span class="cn">FALSE</span>, <span class="at">pval_aggregate =</span> <span class="cn">FALSE</span>)), <span class="at">file =</span> <span class="st">"./outputs/05_diffexp_sleuth-transcripts-wt-all_IL26-ctl_TI-48h.csv"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="test-for-differentially-expressed-genes---pairwise" class="level3">
+<h3 class="anchored" data-anchor-id="test-for-differentially-expressed-genes---pairwise">Test for differentially-expressed genes - pairwise</h3>
+<p>To get as “clean” results as possible for downstream Venn intersections, stick to same parameters throughout:</p>
+<ul>
+<li><code>sleuth_lrt</code> Likelihood Ratio test, accounting for <code>batch</code> and <code>donor</code> differences</li>
+<li><code>sleuth_results</code> with <code>pval_aggregate = FALSE</code> to extract transcript-level results</li>
+<li><code>qval &lt;= 0.05</code> filter for differentially-expressed transcripts/genes</li>
+</ul>
+<section id="il22-only-vs-control" class="level4">
+<h4 class="anchored" data-anchor-id="il22-only-vs-control">IL22 only vs control</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>metadata.CO.il22.ctl <span class="ot">&lt;-</span> <span class="fu">subset</span>(metadata.CO<span class="fl">.48</span>h, stim <span class="sc">==</span> <span class="st">"IL22"</span> <span class="sc">|</span> stim <span class="sc">==</span> <span class="st">"ctl"</span>)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>metadata.TI.il22.ctl <span class="ot">&lt;-</span> <span class="fu">subset</span>(metadata.TI<span class="fl">.48</span>h, stim <span class="sc">==</span> <span class="st">"IL22"</span> <span class="sc">|</span> stim <span class="sc">==</span> <span class="st">"ctl"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># sleuth object and fit models</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>so.CO.il22.ctl <span class="ot">&lt;-</span> <span class="fu">sleuth_prep</span>(metadata.CO.il22.ctl,</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">target_mapping =</span> ttg, <span class="at">aggregation_column =</span> <span class="st">"ens_gene"</span>,</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>                           <span class="at">extra_bootstrap_summary =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>                           <span class="at">read_bootstrap_tpm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>so.CO.il22.ctl <span class="ot">&lt;-</span> <span class="fu">sleuth_fit</span>(so.CO.il22.ctl, <span class="sc">~</span>donor, <span class="st">"reduced"</span>)</span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>so.CO.il22.ctl <span class="ot">&lt;-</span> <span class="fu">sleuth_fit</span>(so.CO.il22.ctl, <span class="sc">~</span>donor <span class="sc">+</span> stim, <span class="st">"full"</span>)</span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a><span class="co"># check fitted models</span></span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a><span class="fu">models</span>(so.CO.il22.ctl)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># sleuth object and fit models</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>so.TI.il22.ctl <span class="ot">&lt;-</span> <span class="fu">sleuth_prep</span>(metadata.TI.il22.ctl,</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">target_mapping =</span> ttg, <span class="at">aggregation_column =</span> <span class="st">"ens_gene"</span>,</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>                           <span class="at">extra_bootstrap_summary =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>                           <span class="at">read_bootstrap_tpm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>so.TI.il22.ctl <span class="ot">&lt;-</span> <span class="fu">sleuth_fit</span>(so.TI.il22.ctl, <span class="sc">~</span>donor, <span class="st">"reduced"</span>)</span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>so.TI.il22.ctl <span class="ot">&lt;-</span> <span class="fu">sleuth_fit</span>(so.TI.il22.ctl, <span class="sc">~</span>donor <span class="sc">+</span> stim, <span class="st">"full"</span>)</span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a><span class="co"># check fitted models</span></span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a><span class="fu">models</span>(so.TI.il22.ctl)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># likelihood ratio test</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>so.CO.il22.ctl <span class="ot">&lt;-</span> <span class="fu">sleuth_lrt</span>(so.CO.il22.ctl, <span class="st">"reduced"</span>, <span class="st">"full"</span>)</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>so.TI.il22.ctl <span class="ot">&lt;-</span> <span class="fu">sleuth_lrt</span>(so.TI.il22.ctl, <span class="st">"reduced"</span>, <span class="st">"full"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get differentially-expressed transcripts</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>sleuth_table_tx_CO.il22 <span class="ot">&lt;-</span> <span class="fu">sleuth_results</span>(so.CO.il22.ctl, <span class="st">"reduced:full"</span>, <span class="st">"lrt"</span>, <span class="at">show_all =</span> <span class="cn">FALSE</span>, <span class="at">pval_aggregate =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>sleuth_table_tx_CO.il22 <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(sleuth_table_tx_CO.il22, qval <span class="sc">&lt;=</span> <span class="fl">0.05</span>)</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sleuth_table_tx_CO.il22, <span class="dv">20</span>)</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>sleuth_table_tx_TI.il22 <span class="ot">&lt;-</span> <span class="fu">sleuth_results</span>(so.TI.il22.ctl, <span class="st">"reduced:full"</span>, <span class="st">"lrt"</span>, <span class="at">show_all =</span> <span class="cn">FALSE</span>, <span class="at">pval_aggregate =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>sleuth_table_tx_TI.il22 <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(sleuth_table_tx_TI.il22, qval <span class="sc">&lt;=</span> <span class="fl">0.05</span>)</span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sleuth_table_tx_TI.il22, <span class="dv">20</span>)</span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a><span class="co"># with gene aggregation</span></span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>sleuth_table_gene_CO.il22 <span class="ot">&lt;-</span> <span class="fu">sleuth_results</span>(so.CO.il22.ctl, <span class="st">"reduced:full"</span>, <span class="st">"lrt"</span>, <span class="at">show_all =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a>sleuth_table_gene_CO.il22 <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(sleuth_table_gene_CO.il22, qval <span class="sc">&lt;=</span> <span class="fl">0.05</span>)</span>
+<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sleuth_table_gene_CO.il22, <span class="dv">20</span>)</span>
+<span id="cb50-14"><a href="#cb50-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-15"><a href="#cb50-15" aria-hidden="true" tabindex="-1"></a>sleuth_table_gene_TI.il22 <span class="ot">&lt;-</span> <span class="fu">sleuth_results</span>(so.TI.il22.ctl, <span class="st">"reduced:full"</span>, <span class="st">"lrt"</span>, <span class="at">show_all =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb50-16"><a href="#cb50-16" aria-hidden="true" tabindex="-1"></a>sleuth_table_gene_TI.il22 <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(sleuth_table_gene_TI.il22, qval <span class="sc">&lt;=</span> <span class="fl">0.05</span>)</span>
+<span id="cb50-17"><a href="#cb50-17" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sleuth_table_gene_TI.il22, <span class="dv">20</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># save result tables</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(sleuth_table_tx_CO.il22, <span class="at">file =</span> <span class="st">"./outputs/05_diffexp_sleuth-transcripts-qval005_IL22-ctl_colonic-48h.csv"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(sleuth_table_gene_CO.il22, <span class="at">file =</span> <span class="st">"./outputs/05_diffexp_sleuth-genes-qval005_IL22-ctl_colonic-48h.csv"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(sleuth_table_tx_TI.il22, <span class="at">file =</span> <span class="st">"./outputs/05_diffexp_sleuth-transcripts-qval005_IL22-ctl_TI-48h.csv"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(sleuth_table_gene_TI.il22, <span class="at">file =</span> <span class="st">"./outputs/05_diffexp_sleuth-genes-qval005_IL22-ctl_TI-48h.csv"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="il26-only-vs-control" class="level4">
+<h4 class="anchored" data-anchor-id="il26-only-vs-control">IL26 only vs control</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>metadata.CO.il26.ctl <span class="ot">&lt;-</span> <span class="fu">subset</span>(metadata.CO<span class="fl">.48</span>h, stim <span class="sc">==</span> <span class="st">"IL26"</span> <span class="sc">|</span> stim <span class="sc">==</span> <span class="st">"ctl"</span>)</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>metadata.TI.il26.ctl <span class="ot">&lt;-</span> <span class="fu">subset</span>(metadata.TI<span class="fl">.48</span>h, stim <span class="sc">==</span> <span class="st">"IL26"</span> <span class="sc">|</span> stim <span class="sc">==</span> <span class="st">"ctl"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># sleuth object and fit models</span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>so.CO.il26.ctl <span class="ot">&lt;-</span> <span class="fu">sleuth_prep</span>(metadata.CO.il26.ctl,</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">target_mapping =</span> ttg, <span class="at">aggregation_column =</span> <span class="st">"ens_gene"</span>,</span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>                           <span class="at">extra_bootstrap_summary =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>                           <span class="at">read_bootstrap_tpm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>so.CO.il26.ctl <span class="ot">&lt;-</span> <span class="fu">sleuth_fit</span>(so.CO.il26.ctl, <span class="sc">~</span>donor, <span class="st">"reduced"</span>)</span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>so.CO.il26.ctl <span class="ot">&lt;-</span> <span class="fu">sleuth_fit</span>(so.CO.il26.ctl, <span class="sc">~</span>donor <span class="sc">+</span> stim, <span class="st">"full"</span>)</span>
+<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a><span class="co"># check fitted models</span></span>
+<span id="cb53-11"><a href="#cb53-11" aria-hidden="true" tabindex="-1"></a><span class="fu">models</span>(so.CO.il26.ctl)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># sleuth object and fit models</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>so.TI.il26.ctl <span class="ot">&lt;-</span> <span class="fu">sleuth_prep</span>(metadata.TI.il26.ctl,</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">target_mapping =</span> ttg, <span class="at">aggregation_column =</span> <span class="st">"ens_gene"</span>,</span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>                           <span class="at">extra_bootstrap_summary =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>                           <span class="at">read_bootstrap_tpm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>so.TI.il26.ctl <span class="ot">&lt;-</span> <span class="fu">sleuth_fit</span>(so.TI.il26.ctl, <span class="sc">~</span>donor, <span class="st">"reduced"</span>)</span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>so.TI.il26.ctl <span class="ot">&lt;-</span> <span class="fu">sleuth_fit</span>(so.TI.il26.ctl, <span class="sc">~</span>donor <span class="sc">+</span> stim, <span class="st">"full"</span>)</span>
+<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a><span class="co"># check fitted models</span></span>
+<span id="cb54-11"><a href="#cb54-11" aria-hidden="true" tabindex="-1"></a><span class="fu">models</span>(so.TI.il26.ctl)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co"># likelihood ratio test</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>so.CO.il26.ctl <span class="ot">&lt;-</span> <span class="fu">sleuth_lrt</span>(so.CO.il26.ctl, <span class="st">"reduced"</span>, <span class="st">"full"</span>)</span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>so.TI.il26.ctl <span class="ot">&lt;-</span> <span class="fu">sleuth_lrt</span>(so.TI.il26.ctl, <span class="st">"reduced"</span>, <span class="st">"full"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get differentially-expressed transcripts</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>sleuth_table_tx_CO.il26 <span class="ot">&lt;-</span> <span class="fu">sleuth_results</span>(so.CO.il26.ctl, <span class="st">"reduced:full"</span>, <span class="st">"lrt"</span>, <span class="at">show_all =</span> <span class="cn">FALSE</span>, <span class="at">pval_aggregate =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>sleuth_table_tx_CO.il26 <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(sleuth_table_tx_CO.il26, qval <span class="sc">&lt;=</span> <span class="fl">0.05</span>)</span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sleuth_table_tx_CO.il26, <span class="dv">20</span>)</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>sleuth_table_tx_TI.il26 <span class="ot">&lt;-</span> <span class="fu">sleuth_results</span>(so.TI.il26.ctl, <span class="st">"reduced:full"</span>, <span class="st">"lrt"</span>, <span class="at">show_all =</span> <span class="cn">FALSE</span>, <span class="at">pval_aggregate =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>sleuth_table_tx_TI.il26 <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(sleuth_table_tx_TI.il26, qval <span class="sc">&lt;=</span> <span class="fl">0.05</span>)</span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sleuth_table_tx_TI.il26, <span class="dv">20</span>)</span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a><span class="co"># with gene aggregation</span></span>
+<span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a>sleuth_table_gene_CO.il26 <span class="ot">&lt;-</span> <span class="fu">sleuth_results</span>(so.CO.il26.ctl, <span class="st">"reduced:full"</span>, <span class="st">"lrt"</span>, <span class="at">show_all =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb56-12"><a href="#cb56-12" aria-hidden="true" tabindex="-1"></a>sleuth_table_gene_CO.il26 <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(sleuth_table_gene_CO.il26, qval <span class="sc">&lt;=</span> <span class="fl">0.05</span>)</span>
+<span id="cb56-13"><a href="#cb56-13" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sleuth_table_gene_CO.il26, <span class="dv">20</span>)</span>
+<span id="cb56-14"><a href="#cb56-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-15"><a href="#cb56-15" aria-hidden="true" tabindex="-1"></a>sleuth_table_gene_TI.il26 <span class="ot">&lt;-</span> <span class="fu">sleuth_results</span>(so.TI.il26.ctl, <span class="st">"reduced:full"</span>, <span class="st">"lrt"</span>, <span class="at">show_all =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb56-16"><a href="#cb56-16" aria-hidden="true" tabindex="-1"></a>sleuth_table_gene_TI.il26 <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(sleuth_table_gene_TI.il26, qval <span class="sc">&lt;=</span> <span class="fl">0.05</span>)</span>
+<span id="cb56-17"><a href="#cb56-17" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sleuth_table_gene_TI.il26, <span class="dv">20</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="co"># save result tables</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(sleuth_table_tx_CO.il26, <span class="at">file =</span> <span class="st">"./outputs/05_diffexp_sleuth-transcripts-qval005_IL26-ctl_colonic-48h.csv"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(sleuth_table_gene_CO.il26, <span class="at">file =</span> <span class="st">"./outputs/05_diffexp_sleuth-genes-qval005_IL26-ctl_colonic-48h.csv"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(sleuth_table_tx_TI.il26, <span class="at">file =</span> <span class="st">"./outputs/05_diffexp_sleuth-transcripts-qval005_IL26-ctl_TI-48h.csv"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(sleuth_table_gene_TI.il26, <span class="at">file =</span> <span class="st">"./outputs/05_diffexp_sleuth-genes-qval005_IL26-ctl_TI-48h.csv"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="il2226-vs-control" class="level4">
+<h4 class="anchored" data-anchor-id="il2226-vs-control">IL22+26 vs control</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>metadata.CO.il22.<span class="fl">26.</span>ctl <span class="ot">&lt;-</span> <span class="fu">subset</span>(metadata.CO<span class="fl">.48</span>h, stim <span class="sc">==</span> <span class="st">"IL22+IL26"</span> <span class="sc">|</span> stim <span class="sc">==</span> <span class="st">"ctl"</span>)</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>metadata.TI.il22.<span class="fl">26.</span>ctl <span class="ot">&lt;-</span> <span class="fu">subset</span>(metadata.TI<span class="fl">.48</span>h, stim <span class="sc">==</span> <span class="st">"IL22+IL26"</span> <span class="sc">|</span> stim <span class="sc">==</span> <span class="st">"ctl"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="co"># sleuth object and fit models</span></span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>so.CO.il22.<span class="fl">26.</span>ctl <span class="ot">&lt;-</span> <span class="fu">sleuth_prep</span>(metadata.CO.il22.<span class="fl">26.</span>ctl,</span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">target_mapping =</span> ttg, <span class="at">aggregation_column =</span> <span class="st">"ens_gene"</span>,</span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>                           <span class="at">extra_bootstrap_summary =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>                           <span class="at">read_bootstrap_tpm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>so.CO.il22.<span class="fl">26.</span>ctl <span class="ot">&lt;-</span> <span class="fu">sleuth_fit</span>(so.CO.il22.<span class="fl">26.</span>ctl, <span class="sc">~</span>donor, <span class="st">"reduced"</span>)</span>
+<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a>so.CO.il22.<span class="fl">26.</span>ctl <span class="ot">&lt;-</span> <span class="fu">sleuth_fit</span>(so.CO.il22.<span class="fl">26.</span>ctl, <span class="sc">~</span>donor <span class="sc">+</span> stim, <span class="st">"full"</span>)</span>
+<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-10"><a href="#cb59-10" aria-hidden="true" tabindex="-1"></a><span class="co"># check fitted models</span></span>
+<span id="cb59-11"><a href="#cb59-11" aria-hidden="true" tabindex="-1"></a><span class="fu">models</span>(so.CO.il22.<span class="fl">26.</span>ctl)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># sleuth object and fit models</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>so.TI.il22.<span class="fl">26.</span>ctl <span class="ot">&lt;-</span> <span class="fu">sleuth_prep</span>(metadata.TI.il22.<span class="fl">26.</span>ctl,</span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">target_mapping =</span> ttg, <span class="at">aggregation_column =</span> <span class="st">"ens_gene"</span>,</span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>                           <span class="at">extra_bootstrap_summary =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>                           <span class="at">read_bootstrap_tpm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a>so.TI.il22.<span class="fl">26.</span>ctl <span class="ot">&lt;-</span> <span class="fu">sleuth_fit</span>(so.TI.il22.<span class="fl">26.</span>ctl, <span class="sc">~</span>donor, <span class="st">"reduced"</span>)</span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a>so.TI.il22.<span class="fl">26.</span>ctl <span class="ot">&lt;-</span> <span class="fu">sleuth_fit</span>(so.TI.il22.<span class="fl">26.</span>ctl, <span class="sc">~</span>donor <span class="sc">+</span> stim, <span class="st">"full"</span>)</span>
+<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a><span class="co"># check fitted models</span></span>
+<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a><span class="fu">models</span>(so.TI.il22.<span class="fl">26.</span>ctl)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="co"># likelihood ratio test</span></span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>so.CO.il22.<span class="fl">26.</span>ctl <span class="ot">&lt;-</span> <span class="fu">sleuth_lrt</span>(so.CO.il22.<span class="fl">26.</span>ctl, <span class="st">"reduced"</span>, <span class="st">"full"</span>)</span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>so.TI.il22.<span class="fl">26.</span>ctl <span class="ot">&lt;-</span> <span class="fu">sleuth_lrt</span>(so.TI.il22.<span class="fl">26.</span>ctl, <span class="st">"reduced"</span>, <span class="st">"full"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get differentially-expressed transcripts</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>sleuth_table_tx_CO.il22<span class="fl">.26</span> <span class="ot">&lt;-</span> <span class="fu">sleuth_results</span>(so.CO.il22.<span class="fl">26.</span>ctl, <span class="st">"reduced:full"</span>, <span class="st">"lrt"</span>, <span class="at">show_all =</span> <span class="cn">FALSE</span>, <span class="at">pval_aggregate =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>sleuth_table_tx_CO.il22<span class="fl">.26</span> <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(sleuth_table_tx_CO.il22<span class="fl">.26</span>, qval <span class="sc">&lt;=</span> <span class="fl">0.05</span>)</span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sleuth_table_tx_CO.il22<span class="fl">.26</span>, <span class="dv">20</span>)</span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a>sleuth_table_tx_TI.il22<span class="fl">.26</span> <span class="ot">&lt;-</span> <span class="fu">sleuth_results</span>(so.TI.il22.<span class="fl">26.</span>ctl, <span class="st">"reduced:full"</span>, <span class="st">"lrt"</span>, <span class="at">show_all =</span> <span class="cn">FALSE</span>, <span class="at">pval_aggregate =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a>sleuth_table_tx_TI.il22<span class="fl">.26</span> <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(sleuth_table_tx_TI.il22<span class="fl">.26</span>, qval <span class="sc">&lt;=</span> <span class="fl">0.05</span>)</span>
+<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sleuth_table_tx_TI.il22<span class="fl">.26</span>, <span class="dv">20</span>)</span>
+<span id="cb62-9"><a href="#cb62-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-10"><a href="#cb62-10" aria-hidden="true" tabindex="-1"></a><span class="co"># with gene aggregation</span></span>
+<span id="cb62-11"><a href="#cb62-11" aria-hidden="true" tabindex="-1"></a>sleuth_table_gene_CO.il22<span class="fl">.26</span> <span class="ot">&lt;-</span> <span class="fu">sleuth_results</span>(so.CO.il22.<span class="fl">26.</span>ctl, <span class="st">"reduced:full"</span>, <span class="st">"lrt"</span>, <span class="at">show_all =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb62-12"><a href="#cb62-12" aria-hidden="true" tabindex="-1"></a>sleuth_table_gene_CO.il22<span class="fl">.26</span> <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(sleuth_table_gene_CO.il22<span class="fl">.26</span>, qval <span class="sc">&lt;=</span> <span class="fl">0.05</span>)</span>
+<span id="cb62-13"><a href="#cb62-13" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sleuth_table_gene_CO.il22<span class="fl">.26</span>, <span class="dv">20</span>)</span>
+<span id="cb62-14"><a href="#cb62-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-15"><a href="#cb62-15" aria-hidden="true" tabindex="-1"></a>sleuth_table_gene_TI.il22<span class="fl">.26</span> <span class="ot">&lt;-</span> <span class="fu">sleuth_results</span>(so.TI.il22.<span class="fl">26.</span>ctl, <span class="st">"reduced:full"</span>, <span class="st">"lrt"</span>, <span class="at">show_all =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb62-16"><a href="#cb62-16" aria-hidden="true" tabindex="-1"></a>sleuth_table_gene_TI.il22<span class="fl">.26</span> <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(sleuth_table_gene_TI.il22<span class="fl">.26</span>, qval <span class="sc">&lt;=</span> <span class="fl">0.05</span>)</span>
+<span id="cb62-17"><a href="#cb62-17" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sleuth_table_gene_TI.il22<span class="fl">.26</span>, <span class="dv">20</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="co"># save result tables</span></span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(sleuth_table_tx_CO.il22<span class="fl">.26</span>, <span class="at">file =</span> <span class="st">"./outputs/05_diffexp_sleuth-transcripts-qval005_IL22+26-ctl_colonic-48h.csv"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(sleuth_table_gene_CO.il22<span class="fl">.26</span>, <span class="at">file =</span> <span class="st">"./outputs/05_diffexp_sleuth-genes-qval005_IL22+26-ctl_colonic-48h.csv"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(sleuth_table_tx_TI.il22<span class="fl">.26</span>, <span class="at">file =</span> <span class="st">"./outputs/05_diffexp_sleuth-transcripts-qval005_IL22+26-ctl_TI-48h.csv"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(sleuth_table_gene_TI.il22<span class="fl">.26</span>, <span class="at">file =</span> <span class="st">"./outputs/05_diffexp_sleuth-genes-qval005_IL22+26-ctl_TI-48h.csv"</span>, <span class="at">quote =</span> <span class="cn">FALSE</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="heatmap-with-query-genes" class="level3">
+<h3 class="anchored" data-anchor-id="heatmap-with-query-genes">Heatmap with query genes</h3>
+<p>Load query genes and annotate with <code>ens_gene</code> IDs.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>query.CO <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"./07_query-genes_colonic-48h.rds"</span>)</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>query.TI <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"./07_query-genes_TI-48h.rds"</span>)</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a><span class="co"># extract IDs from ttg map</span></span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>ens.gene <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">data.frame</span>(ttg<span class="sc">$</span>ens_gene, ttg<span class="sc">$</span>ext_gene))</span>
+<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-7"><a href="#cb64-7" aria-hidden="true" tabindex="-1"></a><span class="co"># annotate</span></span>
+<span id="cb64-8"><a href="#cb64-8" aria-hidden="true" tabindex="-1"></a>query.CO <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(query.CO<span class="sc">$</span>ext_gene)</span>
+<span id="cb64-9"><a href="#cb64-9" aria-hidden="true" tabindex="-1"></a>query.CO <span class="ot">&lt;-</span> <span class="fu">left_join</span>(query.CO, ens.gene, <span class="at">by =</span> <span class="fu">join_by</span>(<span class="st">"query.CO.ext_gene"</span> <span class="sc">==</span> <span class="st">"ttg.ext_gene"</span>))</span>
+<span id="cb64-10"><a href="#cb64-10" aria-hidden="true" tabindex="-1"></a>query.TI <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(query.TI<span class="sc">$</span>ext_gene)</span>
+<span id="cb64-11"><a href="#cb64-11" aria-hidden="true" tabindex="-1"></a>query.TI <span class="ot">&lt;-</span> <span class="fu">left_join</span>(query.TI, ens.gene, <span class="at">by =</span> <span class="fu">join_by</span>(<span class="st">"query.TI.ext_gene"</span> <span class="sc">==</span> <span class="st">"ttg.ext_gene"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Aggregate TPM values by <code>ens_gene</code> to reflect <strong>sleuth</strong> aggregation in gene mode (<code>sleuth_prep</code> step).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="co"># collect TPM values and annotate with ens_gene IDs</span></span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>abundances.CO <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(so.CO<span class="fl">.48</span>[[<span class="st">"obs_raw"</span>]])</span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>abundances.CO <span class="ot">&lt;-</span> <span class="fu">left_join</span>(abundances.CO, ttg, <span class="at">by =</span> <span class="st">"target_id"</span>)</span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>CO.tpm <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(abundances.CO<span class="sc">$</span>target_id, abundances.CO<span class="sc">$</span>ens_gene, abundances.CO<span class="sc">$</span>tpm, abundances.CO<span class="sc">$</span>sample) <span class="sc">%&gt;%</span> <span class="fu">setNames</span>(<span class="fu">c</span>(<span class="st">"target_id"</span>, <span class="st">"ens_gene"</span>, <span class="st">"tpm"</span>, <span class="st">"sample"</span>))</span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>CO.tpm <span class="ot">&lt;-</span> CO.tpm <span class="sc">%&gt;%</span> <span class="fu">pivot_wider</span>(<span class="at">names_from=</span>sample, <span class="at">values_from=</span>tpm) <span class="sc">%&gt;%</span> <span class="fu">data.frame</span>(<span class="at">check.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(CO.tpm[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           target_id        ens_gene A2_17_A1_T1 A2_17_A1_T2 A2_17_A2_T1
+1 ENST00000000233.10 ENSG00000004059  113.048046 114.4391822  83.4576013
+2  ENST00000000412.8 ENSG00000003056   62.286370  63.4629568  58.0525866
+3 ENST00000000442.11 ENSG00000173153   56.367326  57.5822674  42.5356566
+4  ENST00000001008.6 ENSG00000004478    0.720299   0.9114518   0.9062403
+5  ENST00000001146.7 ENSG00000003137   16.003377  14.6392053   8.1664395</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="co"># aggregate TPMs by ens_gene IDs</span></span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>CO.tpm <span class="ot">&lt;-</span> <span class="fu">subset</span>(CO.tpm, <span class="at">select=</span><span class="sc">-</span><span class="fu">c</span>(target_id))</span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>CO.tpm <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(CO.tpm <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(ens_gene) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), sum)))</span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(CO.tpm[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         ens_gene A2_17_A1_T1 A2_17_A1_T2 A2_17_A2_T1  A2_17_A2_T2
+1 ENSG00000000003 144.3653215 135.3935725  128.639353 129.59310242
+2 ENSG00000000005   0.1546384   0.3390286    0.000000   0.07633511
+3 ENSG00000000419  66.0809984  60.3984577   58.816227  58.76143791
+4 ENSG00000000457   9.2499545   8.5163409    9.504591   8.83021936
+5 ENSG00000000460   6.7911873   6.4767414    4.745486   4.76412295</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set ens_gene IDs as rownames</span></span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(CO.tpm) <span class="ot">&lt;-</span> CO.tpm<span class="sc">$</span>ens_gene</span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a>CO.tpm <span class="ot">&lt;-</span> <span class="fu">subset</span>(CO.tpm, <span class="at">select=</span><span class="sc">-</span><span class="fu">c</span>(ens_gene))</span>
+<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(CO.tpm[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                A2_17_A1_T1 A2_17_A1_T2 A2_17_A2_T1  A2_17_A2_T2  A2_17_A3_T1
+ENSG00000000003 144.3653215 135.3935725  128.639353 129.59310242 112.56178662
+ENSG00000000005   0.1546384   0.3390286    0.000000   0.07633511   0.03958248
+ENSG00000000419  66.0809984  60.3984577   58.816227  58.76143791  64.85298055
+ENSG00000000457   9.2499545   8.5163409    9.504591   8.83021936   8.91752996
+ENSG00000000460   6.7911873   6.4767414    4.745486   4.76412295   5.72348479</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="co"># log(tpm+1) values</span></span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>CO.logtpm <span class="ot">&lt;-</span> <span class="fu">log2</span>(CO.tpm <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(CO.logtpm[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                A2_17_A1_T1 A2_17_A1_T2 A2_17_A2_T1 A2_17_A2_T2 A2_17_A3_T1
+ENSG00000000003   7.1835393   7.0916318    7.018360   7.0289349  6.82733364
+ENSG00000000005   0.2074412   0.4211867    0.000000   0.1061273  0.05600422
+ENSG00000000419   6.0678323   5.9401305    5.902465   5.9011430  6.04117683
+ENSG00000000457   3.3575456   3.2504070    3.392948   3.2972236  3.30998085
+ENSG00000000460   2.9618432   2.9024096    2.522429   2.5271011  2.74920918</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="co"># collect TPM values and annotate with ens_gene IDs</span></span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>abundances.TI <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(so.TI<span class="fl">.48</span>[[<span class="st">"obs_raw"</span>]])</span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>abundances.TI <span class="ot">&lt;-</span> <span class="fu">left_join</span>(abundances.TI, ttg, <span class="at">by =</span> <span class="st">"target_id"</span>)</span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>TI.tpm <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(abundances.TI<span class="sc">$</span>target_id, abundances.TI<span class="sc">$</span>ens_gene, abundances.TI<span class="sc">$</span>tpm, abundances.TI<span class="sc">$</span>sample) <span class="sc">%&gt;%</span> <span class="fu">setNames</span>(<span class="fu">c</span>(<span class="st">"target_id"</span>, <span class="st">"ens_gene"</span>, <span class="st">"tpm"</span>, <span class="st">"sample"</span>))</span>
+<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a>TI.tpm <span class="ot">&lt;-</span> TI.tpm <span class="sc">%&gt;%</span> <span class="fu">pivot_wider</span>(<span class="at">names_from=</span>sample, <span class="at">values_from=</span>tpm) <span class="sc">%&gt;%</span> <span class="fu">data.frame</span>(<span class="at">check.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb73-6"><a href="#cb73-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(TI.tpm[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           target_id        ens_gene   A2_11_A1 A2_11_A1_T2  A2_11_A2
+1 ENST00000000233.10 ENSG00000004059 73.8419632    61.94337 50.961205
+2  ENST00000000412.8 ENSG00000003056 71.2747163    63.06630 65.215709
+3 ENST00000000442.11 ENSG00000173153 55.4662004    45.19130 42.666884
+4  ENST00000001008.6 ENSG00000004478  0.9008425     0.81096  1.136238
+5  ENST00000001146.7 ENSG00000003137 43.5737191    33.69595 40.519112</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="co"># aggregate TPMs by ens_gene IDs</span></span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>TI.tpm <span class="ot">&lt;-</span> <span class="fu">subset</span>(TI.tpm, <span class="at">select=</span><span class="sc">-</span><span class="fu">c</span>(target_id))</span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>TI.tpm <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(TI.tpm <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(ens_gene) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), sum)))</span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(TI.tpm[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         ens_gene  A2_11_A1 A2_11_A1_T2     A2_11_A2  A2_11_A2_T2
+1 ENSG00000000003 93.131443  93.4397981 110.87283719 116.59477915
+2 ENSG00000000005  0.000000   0.2666377   0.07514625   0.05147769
+3 ENSG00000000419 89.881621  87.7085883  84.08129958  82.82390164
+4 ENSG00000000457 13.060991  13.5357426  12.69387027  14.05496442
+5 ENSG00000000460  6.676273   8.3105859   8.06875508   5.93130059</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set ens_gene IDs as rownames</span></span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(TI.tpm) <span class="ot">&lt;-</span> TI.tpm<span class="sc">$</span>ens_gene</span>
+<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a>TI.tpm <span class="ot">&lt;-</span> <span class="fu">subset</span>(TI.tpm, <span class="at">select=</span><span class="sc">-</span><span class="fu">c</span>(ens_gene))</span>
+<span id="cb77-4"><a href="#cb77-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(TI.tpm[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                 A2_11_A1 A2_11_A1_T2     A2_11_A2  A2_11_A2_T2   A2_11_A3
+ENSG00000000003 93.131443  93.4397981 110.87283719 116.59477915 90.8984643
+ENSG00000000005  0.000000   0.2666377   0.07514625   0.05147769  0.3215633
+ENSG00000000419 89.881621  87.7085883  84.08129958  82.82390164 82.1939565
+ENSG00000000457 13.060991  13.5357426  12.69387027  14.05496442 13.2918724
+ENSG00000000460  6.676273   8.3105859   8.06875508   5.93130059  8.4338118</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="co"># log(tpm+1) values</span></span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a>TI.logtpm <span class="ot">&lt;-</span> <span class="fu">log2</span>(TI.tpm <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb79-3"><a href="#cb79-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(TI.logtpm[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                A2_11_A1 A2_11_A1_T2  A2_11_A2 A2_11_A2_T2  A2_11_A3
+ENSG00000000003 6.556605   6.5613231 6.8057160  6.87768020 6.5219688
+ENSG00000000005 0.000000   0.3410039 0.1045329  0.07241825 0.4022455
+ENSG00000000419 6.505917   6.4710019 6.4107702  6.38928977 6.3784068
+ENSG00000000457 3.813626   3.8615329 3.7754583  3.91216739 3.8371230
+ENSG00000000460 2.940406   3.2188720 3.1809045  2.79312609 3.2378408</code></pre>
+</div>
+</div>
+<p>Metadata information in the same order as colnames of the TPM dataframe.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="co"># not in order of TPM dataframe</span></span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a>CO.metadata.ditto <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(so.CO<span class="fl">.48</span>[[<span class="st">"sample_to_covariates"</span>]])</span>
+<span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ordered to match TPM and log(tpm+1) dataframes</span></span>
+<span id="cb81-4"><a href="#cb81-4" aria-hidden="true" tabindex="-1"></a>CO.metadata.ditto <span class="ot">&lt;-</span> CO.metadata.ditto[<span class="fu">match</span>(<span class="fu">colnames</span>(CO.tpm), CO.metadata.ditto<span class="sc">$</span>sample),]</span>
+<span id="cb81-5"><a href="#cb81-5" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(CO.tpm)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "A2_17_A1_T1" "A2_17_A1_T2" "A2_17_A2_T1" "A2_17_A2_T2" "A2_17_A3_T1"
+ [6] "A2_17_A3_T2" "A2_17_A4_T1" "A2_17_A4_T2" "A2_17_B1_T1" "A2_17_B1_T2"
+[11] "A2_17_B2_T1" "A2_17_B2_T2" "A2_17_B3_T1" "A2_17_B3_T2" "A2_17_B4_T1"
+[16] "A2_17_B4_T2" "A2_18_A1_T1" "A2_18_A1_T2" "A2_18_A2_T1" "A2_18_A2_T2"
+[21] "A2_18_A3_T1" "A2_18_A3_T2" "A2_18_A4_T1" "A2_18_A4_T2" "A2_19_A1_T1"
+[26] "A2_19_A1_T2" "A2_19_A2_T1" "A2_19_A2_T2" "A2_19_A3_T1" "A2_19_A3_T2"
+[31] "A2_19_A4_T1" "A2_19_A4_T2"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a>CO.metadata.ditto<span class="sc">$</span>sample</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "A2_17_A1_T1" "A2_17_A1_T2" "A2_17_A2_T1" "A2_17_A2_T2" "A2_17_A3_T1"
+ [6] "A2_17_A3_T2" "A2_17_A4_T1" "A2_17_A4_T2" "A2_17_B1_T1" "A2_17_B1_T2"
+[11] "A2_17_B2_T1" "A2_17_B2_T2" "A2_17_B3_T1" "A2_17_B3_T2" "A2_17_B4_T1"
+[16] "A2_17_B4_T2" "A2_18_A1_T1" "A2_18_A1_T2" "A2_18_A2_T1" "A2_18_A2_T2"
+[21] "A2_18_A3_T1" "A2_18_A3_T2" "A2_18_A4_T1" "A2_18_A4_T2" "A2_19_A1_T1"
+[26] "A2_19_A1_T2" "A2_19_A2_T1" "A2_19_A2_T2" "A2_19_A3_T1" "A2_19_A3_T2"
+[31] "A2_19_A4_T1" "A2_19_A4_T2"</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="co"># not in order of TPM dataframe</span></span>
+<span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a>TI.metadata.ditto <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(so.TI<span class="fl">.48</span>[[<span class="st">"sample_to_covariates"</span>]])</span>
+<span id="cb85-3"><a href="#cb85-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ordered to match TPM and log(tpm+1) dataframes</span></span>
+<span id="cb85-4"><a href="#cb85-4" aria-hidden="true" tabindex="-1"></a>TI.metadata.ditto <span class="ot">&lt;-</span> TI.metadata.ditto[<span class="fu">match</span>(<span class="fu">colnames</span>(TI.tpm), TI.metadata.ditto<span class="sc">$</span>sample),]</span>
+<span id="cb85-5"><a href="#cb85-5" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(TI.tpm)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "A2_11_A1"    "A2_11_A1_T2" "A2_11_A2"    "A2_11_A2_T2" "A2_11_A3"   
+ [6] "A2_11_A3_T2" "A2_11_A4"    "A2_11_A4_T2" "A2_11_B1"    "A2_11_B1_T2"
+[11] "A2_11_B2"    "A2_11_B2_T2" "A2_11_B3"    "A2_11_B3_T2" "A2_11_B4"   
+[16] "A2_11_B4_T2" "A2_11_C1_T2" "A2_11_C2_T2" "A2_11_C3_T2" "A2_11_C4_T2"
+[21] "A2_12_C1"    "A2_12_C2"    "A2_12_C3"    "A2_12_C4"    "A2_14_A1_T1"
+[26] "A2_14_A1_T2" "A2_14_A2_T1" "A2_14_A2_T2" "A2_14_A3_T1" "A2_14_A3_T2"
+[31] "A2_14_A4_T1" "A2_14_A4_T2"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a>TI.metadata.ditto<span class="sc">$</span>sample</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "A2_11_A1"    "A2_11_A1_T2" "A2_11_A2"    "A2_11_A2_T2" "A2_11_A3"   
+ [6] "A2_11_A3_T2" "A2_11_A4"    "A2_11_A4_T2" "A2_11_B1"    "A2_11_B1_T2"
+[11] "A2_11_B2"    "A2_11_B2_T2" "A2_11_B3"    "A2_11_B3_T2" "A2_11_B4"   
+[16] "A2_11_B4_T2" "A2_11_C1_T2" "A2_11_C2_T2" "A2_11_C3_T2" "A2_11_C4_T2"
+[21] "A2_12_C1"    "A2_12_C2"    "A2_12_C3"    "A2_12_C4"    "A2_14_A1_T1"
+[26] "A2_14_A1_T2" "A2_14_A2_T1" "A2_14_A2_T2" "A2_14_A3_T1" "A2_14_A3_T2"
+[31] "A2_14_A4_T1" "A2_14_A4_T2"</code></pre>
+</div>
+</div>
+<p>Import data for dittoSeq which uses <code>SingleCellExperiment</code> structure.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a>CO.bulkSCE <span class="ot">&lt;-</span> <span class="fu">importDittoBulk</span>(<span class="at">x =</span> <span class="fu">list</span>(<span class="at">counts =</span> CO.tpm, <span class="at">logcounts =</span> CO.logtpm),</span>
+<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a>                           <span class="at">metadata =</span> CO.metadata.ditto)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a>TI.bulkSCE <span class="ot">&lt;-</span> <span class="fu">importDittoBulk</span>(<span class="at">x =</span> <span class="fu">list</span>(<span class="at">counts =</span> TI.tpm, <span class="at">logcounts =</span> TI.logtpm),</span>
+<span id="cb90-2"><a href="#cb90-2" aria-hidden="true" tabindex="-1"></a>                           <span class="at">metadata =</span> TI.metadata.ditto)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Plot query genes.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter out query gene IDs not found in the SCE object</span></span>
+<span id="cb91-2"><a href="#cb91-2" aria-hidden="true" tabindex="-1"></a>CO.query.ditto <span class="ot">&lt;-</span> query.CO<span class="sc">$</span>ttg.ens_gene</span>
+<span id="cb91-3"><a href="#cb91-3" aria-hidden="true" tabindex="-1"></a>CO.query.ditto <span class="ot">&lt;-</span> CO.query.ditto[CO.query.ditto <span class="sc">%in%</span> <span class="fu">rownames</span>(CO.bulkSCE)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a><span class="co"># By default, dittoHeatmap prioritises "logcounts" over "counts"</span></span>
+<span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dittoHeatmap</span>(CO.bulkSCE, CO.query.ditto,</span>
+<span id="cb92-3"><a href="#cb92-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">annot.by =</span> <span class="fu">c</span>(<span class="st">"stim"</span>, <span class="st">"donor"</span>), </span>
+<span id="cb92-4"><a href="#cb92-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">order.by =</span> (<span class="st">"donor"</span>), <span class="at">cluster_cols =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb92-5"><a href="#cb92-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">show_rownames =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb92-6"><a href="#cb92-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">main =</span> <span class="st">"Colonic (48h) | Diff genes (qval&lt;=0.05) IL26+IL22 subset"</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in .get_heatmap_data(object, genes, metas, assay, slot, cells.use):
+Gene(s) or metadata removed due to absence of non-zero values within the
+'cells.use' subset</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06_diffexp_sleuth_files/figure-html/unnamed-chunk-55-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter out query gene IDs not found in the SCE object</span></span>
+<span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a>TI.query.ditto <span class="ot">&lt;-</span> query.TI<span class="sc">$</span>ttg.ens_gene</span>
+<span id="cb94-3"><a href="#cb94-3" aria-hidden="true" tabindex="-1"></a>TI.query.ditto <span class="ot">&lt;-</span> TI.query.ditto[TI.query.ditto <span class="sc">%in%</span> <span class="fu">rownames</span>(TI.bulkSCE)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a><span class="co"># By default, dittoHeatmap prioritises "logcounts" over "counts"</span></span>
+<span id="cb95-2"><a href="#cb95-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dittoHeatmap</span>(TI.bulkSCE, TI.query.ditto,</span>
+<span id="cb95-3"><a href="#cb95-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">annot.by =</span> <span class="fu">c</span>(<span class="st">"stim"</span>, <span class="st">"donor"</span>), </span>
+<span id="cb95-4"><a href="#cb95-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">order.by =</span> (<span class="st">"donor"</span>), <span class="at">cluster_cols =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb95-5"><a href="#cb95-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">show_rownames =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb95-6"><a href="#cb95-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">main =</span> <span class="st">"T. Ileum (48h) | Diff genes (qval&lt;=0.05) IL26+IL22 subset"</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in .get_heatmap_data(object, genes, metas, assay, slot, cells.use):
+Gene(s) or metadata removed due to absence of non-zero values within the
+'cells.use' subset</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06_diffexp_sleuth_files/figure-html/unnamed-chunk-57-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="notes" class="level1">
+<h1>Notes</h1>
+<ul>
+<li><del>Technical replicates for samples <code>A2-7*</code>, <code>A2-11*</code> and <code>A2-12*</code> are in progress.</del></li>
+<li><del>Rebuild <strong>kallisto</strong> index with latest Ensembl release and re-run analysis.</del></li>
+<li>All samples have also been mapped and counted using STAR with <code>--quantMode GeneCounts</code> for differential expression with <strong>DESeq2</strong> - are the main observations replicated?</li>
+<li>Biological themes classification and the enrichment analysis of differential genes.</li>
+</ul>
+</section>
+<section id="packages-and-session-info" class="level1">
+<h1>Packages and session info</h1>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb97"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a>pkgs <span class="ot">&lt;-</span> <span class="fu">cite_packages</span>(<span class="at">output =</span> <span class="st">"table"</span>, <span class="at">out.dir =</span> <span class="st">"."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>A large number of files (1381 in total) have been discovered.
+It may take renv a long time to scan these files for dependencies.
+Consider using .renvignore to ignore irrelevant files.
+See `]8;;x-r-help:renv::dependencies?renv::dependencies]8;;` for more information.
+Set `options(renv.config.dependencies.limit = Inf)` to disable this warning.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb99"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(pkgs)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Package</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Citation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">base</td>
+<td style="text-align: left;">4.5.2</td>
+<td style="text-align: left;"><span class="citation" data-cites="base">@base</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">biomaRt</td>
+<td style="text-align: left;">2.64.0</td>
+<td style="text-align: left;"><span class="citation" data-cites="biomaRt">@biomaRt</span>….</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">clusterProfiler</td>
+<td style="text-align: left;">4.16.0</td>
+<td style="text-align: left;"><span class="citation" data-cites="cluster">@cluster</span>….</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dittoSeq</td>
+<td style="text-align: left;">1.20.1</td>
+<td style="text-align: left;"><span class="citation" data-cites="dittoSeq">@dittoSeq</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">enrichplot</td>
+<td style="text-align: left;">1.28.4</td>
+<td style="text-align: left;"><span class="citation" data-cites="enrichplot">@enrichplot</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ggpubr</td>
+<td style="text-align: left;">0.6.3</td>
+<td style="text-align: left;"><span class="citation" data-cites="ggpubr">@ggpubr</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">gplots</td>
+<td style="text-align: left;">3.3.0</td>
+<td style="text-align: left;"><span class="citation" data-cites="gplots">@gplots</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">grid</td>
+<td style="text-align: left;">4.5.2</td>
+<td style="text-align: left;"><span class="citation" data-cites="grid">@grid</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">knitr</td>
+<td style="text-align: left;">1.51</td>
+<td style="text-align: left;"><span class="citation" data-cites="knitr20">@knitr20</span>….</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PCAtools</td>
+<td style="text-align: left;">2.20.0</td>
+<td style="text-align: left;"><span class="citation" data-cites="PCAtools">@PCAtools</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">pheatmap</td>
+<td style="text-align: left;">1.0.13</td>
+<td style="text-align: left;"><span class="citation" data-cites="pheatmap">@pheatmap</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">rbioapi</td>
+<td style="text-align: left;">0.8.3</td>
+<td style="text-align: left;"><span class="citation" data-cites="rbioapi">@rbioapi</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">RColorBrewer</td>
+<td style="text-align: left;">1.1.3</td>
+<td style="text-align: left;"><span class="citation" data-cites="RColorB">@RColorB</span>….</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">rmarkdown</td>
+<td style="text-align: left;">2.30</td>
+<td style="text-align: left;"><span class="citation" data-cites="rmarkdo">@rmarkdo</span>….</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">rsconnect</td>
+<td style="text-align: left;">1.7.0</td>
+<td style="text-align: left;"><span class="citation" data-cites="rsconnect">@rsconnect</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">RTN</td>
+<td style="text-align: left;">2.32.0</td>
+<td style="text-align: left;"><span class="citation" data-cites="RTN2013">@RTN2013</span>….</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">shiny</td>
+<td style="text-align: left;">1.13.0</td>
+<td style="text-align: left;"><span class="citation" data-cites="shiny">@shiny</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sleuth</td>
+<td style="text-align: left;">0.30.2</td>
+<td style="text-align: left;"><span class="citation" data-cites="sleuth">@sleuth</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SummarizedExperiment</td>
+<td style="text-align: left;">1.38.1</td>
+<td style="text-align: left;"><span class="citation" data-cites="Summari">@Summari</span>….</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sva</td>
+<td style="text-align: left;">3.56.0</td>
+<td style="text-align: left;"><span class="citation" data-cites="sva">@sva</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">tidyverse</td>
+<td style="text-align: left;">2.0.0</td>
+<td style="text-align: left;"><span class="citation" data-cites="tidyverse">@tidyverse</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">UpSetR</td>
+<td style="text-align: left;">1.4.0</td>
+<td style="text-align: left;"><span class="citation" data-cites="UpSetR">@UpSetR</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">viridis</td>
+<td style="text-align: left;">0.6.5</td>
+<td style="text-align: left;"><span class="citation" data-cites="viridis">@viridis</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb100"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>R version 4.5.2 (2025-10-31)
+Platform: x86_64-pc-linux-gnu
+Running under: Ubuntu 22.04.5 LTS
+
+Matrix products: default
+BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.10.0 
+LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.10.0  LAPACK version 3.10.0
+
+locale:
+ [1] LC_CTYPE=en_GB.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_GB.UTF-8        LC_COLLATE=en_GB.UTF-8    
+ [5] LC_MONETARY=en_GB.UTF-8    LC_MESSAGES=en_GB.UTF-8   
+ [7] LC_PAPER=en_GB.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_GB.UTF-8 LC_IDENTIFICATION=C       
+
+time zone: Europe/London
+tzcode source: system (glibc)
+
+attached base packages:
+[1] stats4    stats     graphics  grDevices utils     datasets  methods  
+[8] base     
+
+other attached packages:
+ [1] grateful_0.3.0              rbioapi_0.8.3              
+ [3] gplots_3.3.0                sleuth_0.30.2              
+ [5] PCAtools_2.20.0             ggrepel_0.9.7              
+ [7] biomaRt_2.64.0              dittoSeq_1.20.1            
+ [9] SummarizedExperiment_1.38.1 Biobase_2.68.0             
+[11] GenomicRanges_1.60.0        GenomeInfoDb_1.44.3        
+[13] IRanges_2.42.0              S4Vectors_0.46.0           
+[15] BiocGenerics_0.54.1         generics_0.1.4             
+[17] MatrixGenerics_1.20.0       matrixStats_1.5.0          
+[19] lubridate_1.9.5             forcats_1.0.1              
+[21] stringr_1.6.0               dplyr_1.2.0                
+[23] purrr_1.2.1                 readr_2.2.0                
+[25] tidyr_1.3.2                 tibble_3.3.1               
+[27] ggplot2_4.0.2               tidyverse_2.0.0            
+
+loaded via a namespace (and not attached):
+ [1] bitops_1.0-9                DBI_1.3.0                  
+ [3] gridExtra_2.3               httr2_1.2.2                
+ [5] rlang_1.1.7                 magrittr_2.0.4             
+ [7] aggregation_1.0.1           otel_0.2.0                 
+ [9] ggridges_0.5.7              compiler_4.5.2             
+[11] RSQLite_2.4.6               DelayedMatrixStats_1.30.0  
+[13] reshape2_1.4.5              png_0.1-8                  
+[15] vctrs_0.7.1                 pkgconfig_2.0.3            
+[17] crayon_1.5.3                fastmap_1.2.0              
+[19] dbplyr_2.5.2                XVector_0.48.0             
+[21] labeling_0.4.3              caTools_1.18.3             
+[23] rmarkdown_2.30              tzdb_0.5.0                 
+[25] UCSC.utils_1.4.0            bit_4.6.0                  
+[27] xfun_0.56                   cachem_1.1.0               
+[29] beachmat_2.24.0             jsonlite_2.0.0             
+[31] progress_1.2.3              blob_1.3.0                 
+[33] rhdf5filters_1.20.0         DelayedArray_0.34.1        
+[35] Rhdf5lib_1.30.0             BiocParallel_1.42.2        
+[37] irlba_2.3.7                 parallel_4.5.2             
+[39] prettyunits_1.2.0           R6_2.6.1                   
+[41] stringi_1.8.7               RColorBrewer_1.1-3         
+[43] Rcpp_1.1.1                  knitr_1.51                 
+[45] Matrix_1.7-4                timechange_0.4.0           
+[47] tidyselect_1.2.1            rstudioapi_0.18.0          
+[49] abind_1.4-8                 yaml_2.3.12                
+[51] codetools_0.2-19            curl_7.0.0                 
+[53] plyr_1.8.9                  lattice_0.22-9             
+[55] withr_3.0.2                 KEGGREST_1.48.1            
+[57] S7_0.2.1                    evaluate_1.0.5             
+[59] BiocFileCache_2.16.2        xml2_1.5.2                 
+[61] Biostrings_2.76.0           pillar_1.11.1              
+[63] filelock_1.0.3              KernSmooth_2.23-26         
+[65] renv_1.1.8                  hms_1.1.4                  
+[67] sparseMatrixStats_1.20.0    scales_1.4.0               
+[69] gtools_3.9.5                glue_1.8.0                 
+[71] lazyeval_0.2.2              pheatmap_1.0.13            
+[73] tools_4.5.2                 data.table_1.18.2.1        
+[75] ScaledMatrix_1.16.0         rhdf5_2.52.1               
+[77] cowplot_1.2.0               grid_4.5.2                 
+[79] AnnotationDbi_1.70.0        colorspace_2.1-2           
+[81] SingleCellExperiment_1.30.1 GenomeInfoDbData_1.2.14    
+[83] BiocSingular_1.24.0         rsvd_1.0.5                 
+[85] cli_3.6.5                   rappdirs_0.3.4             
+[87] S4Arrays_1.8.1              gtable_0.3.6               
+[89] digest_0.6.39               dqrng_0.4.1                
+[91] SparseArray_1.8.1           farver_2.1.2               
+[93] memoise_2.0.1               htmltools_0.5.9            
+[95] lifecycle_1.0.5             httr_1.4.8                 
+[97] bit64_4.6.0-1              </code></pre>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
